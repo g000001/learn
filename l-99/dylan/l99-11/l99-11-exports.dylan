@@ -1,0 +1,11 @@
+module: dylan-user
+
+define library l99-11
+  use common-dylan;
+  use io;
+end library;
+
+define module l99-11
+  use common-dylan;
+  use format-out;
+end module;
