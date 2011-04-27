@@ -1,0 +1,647 @@
+\01\
+(define last
+    [] -> []
+    [X | []] -> X
+    [_ | X] -> (last X))
+
+(define last
+    [] -> []
+    [X | []] -> X
+    [_ | X] -> (last X))
+
+\02\
+(define last-but-one
+    [] -> []
+    [X | []] -> [X]
+    [_ | X] -> (last-but-one X))
+
+\?\
+(define butlast
+    X -> (butlast* X []))
+
+(define butlast*
+    [] Acc -> Acc
+    [X | []] Acc -> (reverse Acc)
+    [X | Y] Acc -> (butlast* Y [X | Acc]))
+
+(define fib
+    {number --> number}
+  0 -> 0
+  1 -> 1
+  X -> (+ (fib (- X 1))
+          (fib (- X 2))))
+
+\
+P03 (*) Find the K'th element of a list.
+    The first element in the list is number 1.
+    Example:
+    * (element-at '(a b c d e) 3)
+    C
+\
+
+\(element-at [a b c d e] 3)\
+\ -> 3
+\
+
+(define element-at 
+    List Pos -> [ ] where (or (> 1 Pos) (> Pos (length List)))
+    List Pos -> (element-at* List 1 Pos))
+
+(define element-at*
+    [ ] _ _ -> [ ]
+    [X | _] Cnt Lim -> X where (= Cnt Lim)
+    [_ | X] Cnt Lim -> (element-at* X (1+ Cnt) Lim))
+
+\
+(element-at* [1 2 3 4] 1 2)
+(element-at [1 2 3 4 5 6 7 8 x 10] 9)
+(element-at* [] 1 2)
+(element-at* [] 1 0)
+\
+    
+\P04 (*) Find the number of elements of a list.\
+
+\(len [1 2 3 4 5 6 7 8])\
+\-> 8
+\
+
+(define len
+    [ ] -> 0
+    [_ | T] -> (1+ (len T)))
+
+
+(define len 
+    List -> (len* List 0))
+
+(define len*
+    [ ] Acc -> Acc
+    [H | T] Acc -> (len* T (1+ Acc)))
+
+\
+(len [1 2 3 4 5 6 7 8])
+
+(len* [1 2 3 4] 0)
+
+(nth 1 [1 2 3 4])
+
+(map (/. (* 2 X))
+     [1 2 3 4])
+
+
+(map (* 2) [1 2 3 4])
+
+(map (/. X ((* 2) X)) [1 2 3 4])
+(map (* 2) [1 2 3 4])
+(map (/. X (list X)) [1 2 3 4])
+
+(output "日本語~A" "大丈夫か")
+(cons x y)
+
+((/. X X) 3)
+((/. X (* X 2)) 3)
+
+(list 1)
+\
+\P05 (*) Reverse a list.\
+
+\reverse\
+
+(define rev 
+    [ ] -> [ ]
+    [H | T] -> (append (rev T) [H]))
+
+\06\
+(define palindrome? 
+    X -> true where (= X (reverse X)))
+\07\
+\(flatten [1 2 3 4 [[2 [3] 1] 5 6 7 8]])\
+
+(define flatten
+    [ ] -> [ ]
+    [X | Y] -> (append (flatten X) (flatten Y)) where (cons? X)
+    [X | Y] -> [X | (flatten Y)])
+
+\P08 (**) Eliminate consecutive duplicates of list elements.
+    If a list contains repeated elements they should be replaced with a single copy of the element. The order of the elements should not be changed.
+
+    Example:
+    * (compress '(a a a a b c c a a d e e e e))
+    (A B C A D E)\
+
+\(compress [a a a a b c c a a d e e e e])\
+\=> [a b c a d e]
+\
+
+(define compress
+    [ ] -> [ ]
+    [H T] -> [H] where (= H T)
+    [H | [T | U]] -> (compress [T | U]) where (= H T)
+    [H | T] -> [H | (compress T)])
+
+\
+(compress [a])
+
+(compress [a b])
+(compress [a a b a c])
+\
+\P09 (**) Pack consecutive duplicates of list elements into sublists.
+    If a list contains repeated elements they should be placed in separate sublists.
+
+    Example:
+    * (pack '(a a a a b c c a a d e e e e))
+    ((A A A A) (B) (C C) (A A) (D) (E E E E))\
+
+\(pack [a a a a b c c a a d e e e e])\
+\=> [[a a a a] [b] [c c] [a a] [d]]
+\
+
+(define pack
+    [ ] -> [ ]
+    X -> (pack* X [ ] [ ]))
+
+(define pack*
+    [ ] Acc Res -> (reverse (cons Acc Res))
+    [H | T] Acc Res -> (pack* T (cons H Acc) Res) where (or (empty? Acc) (= H (head Acc)))
+    Lst Acc Res -> (pack* Lst [ ] (cons Acc Res)))
+\
+
+(pack* [a a a a b c c a a d e e e e] [] [])
+(pack* [a a b] [] [])
+(pack [])
+
+(encode [a a a a b c c a a d e e e e])
+\=> [[4 a] [1 b] [2 c] [2 a] [1 d] [4 e]]
+\
+\
+
+(define encode 
+    X -> (encode* (pack X)))
+
+(define encode*
+    [ ] -> [ ]
+    [H | T] -> [[(length H) (head H)] | (encode* T)])
+
+\
+ (encode* [[a a a a] [b] [c c] [a a] [d] [e e e e]])
+
+ [[a a a a] [b] [c c] [a a] [d] [e e e e]]
+
+ (encode-modified '(a a a a b c c a a d e e e e))
+ ;=> ((4 a) b (2 c) (2 a) d (4 e))
+
+ (encode-modified [a a a a b c c a a d e e e e])
+ =>[[4 a] b [2 c] [2 a] d [4 e]]
+\
+
+(define encode-modified
+    X -> (encode-modified* (pack X)))
+
+(define encode-modified*
+    [ ] -> [ ]
+    [H | T] -> [(head H) | (encode-modified* T)] where (= 1 (length H))
+    [H | T] -> [[(length H) (head H)] | (encode-modified* T)])
+
+\(define encode-modified*
+    [ ] -> [ ]
+    [H | T] -> (if (= 1 (length H))
+                   [(head H) | (encode-modified* T)]
+                   [[(length H) (head H)] | (encode-modified* T)]))\
+
+\P12 (**) Decode a run-length encoded list.
+    Given a run-length code list generated as specified in problem P11. Construct its uncompressed version.\
+\(decode [[4 a] b [2 c] [2 a] d [4 e]])\
+\=> [[a a a a] [b] [c c] [a a] [d] [e e e e]]
+\
+
+(define decode
+    [ ] -> [ ]
+    [H | T] -> [(unpack* (nth 2 H) (nth 1 H) [ ]) | (decode T)] where (cons? H)
+    [H | T] -> [[H] | (decode T)])
+
+(define unpack*
+    Item Cnt Acc -> Acc where (= 0 Cnt)
+    Item Cnt Acc -> (unpack* Item (1- Cnt) [Item | Acc]))
+
+\
+(unpack* [4 a])
+
+(nth 1 [1 2 3 4])
+(cons? [4 a])
+
+
+
+(%expand x 2 [])
+\
+
+(define encode-direct
+    X -> (encode-direct* (pack X)))
+
+(define encode-direct*
+    [ ] -> [ ]
+    [H | T] -> [(head H) | (encode-direct* T)] where (= 1 (length H))
+    [H | T] -> [[(length H) (head H)] | (encode-direct* T)])
+
+\
+(encode-direct [a a a a b c c a a d e e e e])
+=>[[4 a] b [2 c] [2 a] d [4 e]]
+
+
+(encode-modified [a a a a b c c a a d e e e e])
+=>[[4 a] b [2 c] [2 a] d [4 e]]
+\
+
+(define encode-modified 
+    X -> (encode-modified* (encode X)))
+
+(define encode-modified*
+  [ ] -> [ ]
+  [[1 X] | T] -> [X | (encode-modified* T)]
+  [H | T] -> [H | (encode-modified* T)])
+
+\
+P14 (*) Duplicate the elements of a list.
+    Example:
+    * (dupli '(a b c c d))
+    (A A B B C C C C D D)\
+
+
+(define dupli 
+  [ ] -> [ ]
+  [H | T] -> [H H | (dupli T)])
+
+(dupli [a b c d e])
+\=> [a a b b c c d d e e]
+\
+
+
+\P15 (**) Replicate the elements of a list a given number of times.
+    Example:
+    * (repli [a b c] 3)
+[a a a b b b c c c]
+    (A A A B B B C C C)
+\
+
+(define repli 
+  [ ] _ -> [ ]
+  [H | T] N -> (append (n-of N H) (repli T N)))
+
+(define n-of 
+  N Item -> [ ] where (>= 0 N)
+  N Item -> [Item | (n-of (1- N) Item)])
+
+
+\
+P16 (**) Drop every N'th element from a list.
+    Example:
+    * (drop [a b c d e f g h i k] 3)
+    [a b d e g h k]
+    (A B D E G H K)
+\
+
+(define drop
+  X N -> (drop* X N 1))
+
+(define drop* 
+  [ ] _ _ -> [ ]
+  [H | T] N Cnt -> (drop* T N 1) where (= N Cnt)
+  [H | T] N Cnt -> [H | (drop* T N (1+ Cnt))])
+
+(drop [1 2 3 4 5 6 7 8 9] 3)
+(drop* [1 2 3 4 5 6 7 8 9] 3 1)
+
+\
+P17 (*) Split a list into two parts; the length of the first part is given.
+    Do not use any predefined predicates.
+
+    Example:
+    * (split '(a b c d e f g h i k) 3)
+    ( (A B C) (D E F G H I K))
+\
+
+
+(define split 
+  Lst N -> (split* Lst [ ] N))
+
+(define split* 
+  Lst Acc Cnt -> [(reverse Acc) | [Lst]] where (or (empty? Lst) (> 1 Cnt))
+  [H | T] Acc Cnt -> (split* T [H | Acc] (1- Cnt)))
+
+(split* [a b c d e f g h i j k] [ ] -3)
+(split* [a] [ ] 1)
+(split* [a b c d e f g h i j k] [ ] 100)
+
+(split [a b c d e f g h i k] 3)
+\=> [[a b c] [d e f g h i k]]
+\
+
+\P18 (**) Extract a slice from a list.
+    Given two indices, I and K, the slice is the list containing the elements between the I'th and K'th element of the original list (both limits included). Start counting the elements with 1.
+
+    Example:
+    * (slice '(a b c d e f g h i k) 3 7)
+    (C D E F G)\
+
+
+(define slice 
+  List Start End -> [ ] where (> Start End)
+  List Start End -> (slice* List [ ] 1 Start End))
+
+(define slice* 
+  [ ] Acc _ _ _ -> (reverse Acc)
+  [H | T] Acc End Start End -> (slice* [ ] [H | Acc] End Start End)
+  [H | T] Acc Pos Start End 
+   -> (slice* T [H | Acc] (1+ Pos) Start End) where (<= Start Pos)
+  [_ | T] Acc Pos Start End 
+   -> (slice* T Acc (1+ Pos) Start End))
+
+\ 前回定義したsplitを使用したもの \
+(define slice 
+  List Start End -> [ ] where (> Start End)
+  List Start End -> (let S (1- Start)
+		      (head (split (head (tail (split List S))) 
+				   (- End S)))))
+
+(define slice* 
+  [ ] Acc _ _ _ -> (reverse Acc)
+  [H | T] Acc End _ End -> (reverse Acc)
+  [H | T] Acc Pos Start End 
+   -> (slice* T [H | Acc] (1+ Pos) Start End) where (<= Start Pos)
+  [_ | T] Acc Pos Start End 
+   -> (slice* T Acc (1+ Pos) Start End))
+
+(slice [a b c d e f g h i j k] 3 7)
+\=>[c d e f g]
+\
+
+\
+P19 (**) Rotate a list N places to the left.
+    Examples:
+    * (rotate '(a b c d e f g h) 3)
+    (D E F G H A B C)
+
+    * (rotate '(a b c d e f g h) -2)
+    (G H A B C D E F)
+
+    Hint: Use the predefined functions length and append, as well as the result of problem P17.
+\
+
+(define my-rotate
+  [ ] _ -> [ ]
+  Lst N -> (xappend (split Lst (+ N (length Lst)))) where (> 0 N)
+  Lst N -> (xappend (split Lst N)))
+
+(define xappend
+  [H T] -> (append T  H))
+
+(my-rotate [a b c d e f g h] -2)
+\=> [g h a b c d e f]
+\
+
+(my-rotate [a b c d e f g h] 3)
+\=>  [d e f g h a b c]
+\
+\
+(my-rotate [1 2 3 4] 3)
+
+(element? a [a b c])
+(difference [a b c d] [a b c])
+(explode foooo)
+(fst (a b c d e))
+
+(MEMBER d [a b c d e])
+
+(define foo
+    [and A B] -> [A B]
+    A -> 42)
+
+(foo [and 1 2])
+
+(LIST a b c)
+(CONS a [a b c])
+\
+
+\P20 (*) Remove the K'th element from a list.
+    Example:
+    * (remove-at '(a b c d) 2)
+    (A C D)\
+
+(define remove-at 
+  [ ] _ -> [ ]
+  X K -> X where (>= 0 K)
+  [H | T] 1 -> T
+  [H | T] K -> [H | (remove-at T (- K 1))])
+
+(remove-at [a b c d] 2)
+\=> [a c d]
+\
+
+\
+P21 (*) Insert an element at a given position into a list.
+    Example:
+    * (insert-at 'alfa '(a b c d) 2)
+    (A ALFA B C D)
+\
+
+(define insert-at
+  Item [ ] _ -> [Item]
+  Item Lst Pos -> [Item | Lst] where (>= 1 Pos)
+  Item [H | T] Pos -> [H | (insert-at Item T (- Pos 1))])
+
+(insert-at alfa [a b c d] 2)
+\=> [a alfa b c d]
+\
+(insert-at alfa [a b c d] -2)
+(insert-at alfa [a b c d] 0)
+(insert-at alfa [a b c d] 100)
+(insert-at alfa [] 0)
+
+\P22 (*) Create a list containing all integers within a given range.
+    If first argument is smaller than second, produce a list in decreasing order.
+    Example:
+    * (range 4 9)
+    (4 5 6 7 8 9)\
+
+(define range 
+  Start End -> [] where (> Start End)
+  Start End -> [Start | (range (+ 1 Start) End)])
+
+(range 0.5 10)
+\=> [0.5 1.5 2.5 3.5 4.5 5.5 6.5 7.5 8.5 9.5]
+\
+
+(range 10 2.4)
+
+(range 9 -4)
+\
+P23 (**) Extract a given number of randomly selected elements from a list.
+    The selected items shall be returned in a list.
+    Example:
+    * (rnd-select '(a b c d e f g h) 3)
+    (E D A)
+
+    Hint: Use the built-in random number generator and the result of problem P20.
+\
+
+(define rnd-select
+    [ ] _ -> [ ]
+    Lst N -> where )
+
+(define rnd-select
+    [ ] _ -> [ ]
+    Lst N -> [ ] where (> N (length Lst))
+    Lst N -> (rnd-select* Lst N [ ] (length Lst)))
+
+(define rnd-select 
+  [ ] _ -> [ ]
+  Lst N -> (let Len (length Lst)
+	     (if (> N Len)
+		 [ ]
+		 (rnd-select* Lst N [ ] Len))))
+
+(define rnd-select* 
+  [ ] _ Acc _ -> Acc
+  Lst N Acc Len -> Acc where (>= 0 N)
+  Lst N Acc Len -> (let Pos (+ 1 (random Len))
+		     (rnd-select* (remove-at Lst Pos)
+				  (- N 1)
+				  [(nth Pos Lst) | Acc]
+				  (- Len 1))))
+
+(rnd-select* [a b c] 3 [ ] 3)
+(rnd-select [a b c d e f g h] 8)
+
+\=> [g c e]
+\
+
+\(rnd-select [a b c d e f g h] 8)
+(rnd-select* [a b c d e f g h] 3 [] 7)
+\
+(nth 1 [a b c d])
+
+(random 3)
+
+(define pat
+    [X Y foo | T] -> [X | T]
+    X -> X)
+
+(define but-x 
+    Item [Item | T] -> T
+    Item [H | T] -> [H | (but-x Item T)])
+
+(but-x a [a b c d a])
+
+(pat [a b c d e foo x])
+(pat [a b foo x])
+\
+P24 (*) Lotto: Draw N different random numbers from the set 1..M.
+    The selected numbers shall be returned in a list.
+    Example:
+    * (lotto-select 6 49)
+    (23 1 17 33 21 37)
+
+    Hint: Combine the solutions of problems P22 and P23.
+\
+
+(define lotto-select
+  N M -> (rnd-select (range 1 M) N))
+
+(lotto-select 6 49)
+\=> [29 5 24 18 23 2]
+\
+
+\
+P25 (*) Generate a random permutation of the elements of a list.
+    Example:
+    * (rnd-permu '(a b c d e f))
+    (B A D C E F)
+
+    Hint: Use the solution of problem P23.
+\
+
+(define rnd-permu
+  U -> (rnd-select U (length U)))
+
+(rnd-permu [a b c d e f])
+\=> [e a d f c b]
+\
+
+(define combination 
+  0 Lst -> [ ] 
+  1 Lst -> (map (/. X [X]) Lst)
+  N Lst -> [ ] where (> N (length Lst))
+  N [H | T] -> (append (map (/. X [H | X]) (combination (- N 1) T))
+		       (combination N T)))
+
+(combination 3 [a b c d e f])
+
+\=> [[a b c] [a b d] [a b e] ... ]
+\
+
+(length (combination 3 (range 1 12)))
+\=> 220
+\
+
+\
+(group3 '(aldo beat carla david evi flip gary hugo ida))
+;=> (((aldo beat) (carla david evi) (flip gary hugo ida))
+;    ((aldo beat) (carla david flip) (evi gary hugo ida))
+;    ((aldo beat) (carla david gary) (evi flip hugo ida)) ...)
+
+(len (group3 '(aldo beat carla david evi flip gary hugo ida)))
+;=> 1260
+\
+
+(length (let Lst [1 2 3 4 5 6 7 8 9]
+	     (apply append (map (/. U
+				    (let Diff (SET-DIFFERENCE Lst U)
+					 (map (/. V [U V (SET-DIFFERENCE Diff V)])
+					      (combination 3 Diff))))
+				(combination 2 Lst)))))
+
+(let Lst [1 2 3 4 5 6 7 8 9]
+     (apply append
+	    (map (/. U (let Diff (SET-DIFFERENCE Lst U)
+			    (map (/. V [U V (SET-DIFFERENCE Diff V)])
+				 (combination 3 Diff))))
+		 (combination 2 Lst))))
+
+(+ 1 2)
+
+(define group3*
+    Lst Acc 
+
+
+)
+
+\
+(def group3 (lst)
+  (let res ()
+    (each u (combination 2 lst)
+      (let diff (setdiff lst u)
+	(each v (combination 3 diff)
+	  (= res `(,@res (,u ,v ,(setdiff diff v)))))))
+    res))
+
+(def setdiff (x y)
+  (point exit
+    (each yy y
+      (when (mem yy x)
+	(exit (y-x+z x y () ))))
+    x))
+
+(def y-x+z (y x z)
+  (let y-x ()
+    (each xx y
+      (or (mem xx x) (push xx y-x)))
+    (= y-x (join (rev y-x) z))))
+
+(define member
+    _ [ ] -> false
+    Item [H | T] -> true where (= Item H)
+    Item [H | T] -> (member Item T))
+
+(y-x [1 2 3 4] [1 2])
+\
+
+\(load "/u/mc/lisp/Work/L-99/l99.qi")
+\

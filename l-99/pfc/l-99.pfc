@@ -1,0 +1,643 @@
+;; -*- scheme -*-
+(+ 3 3)
+
+(lambda (x) (+ x x))
+(take 10 ones)
+(foldr + 0 (take 12 ones))
+12
+(define x (lambda (x) (+ x x)))
+
+(cdr [a . b])
+(snd {'a 'b})
+
+
+(def ones (cons 1 ones))
+
+
+(def (from start)
+    (cons start (from (+ 1 start))))
+
+(define (from n) (cons n (from (+ n 1))))
+
+(def (range start end)
+    (take (- end start)
+          (from start)))
+
+(def fizz)
+(print "foo")
+
+(define (fact n) (foldr * 1 (take n from1)))
+
+pfc> (letzf ((x [1 2 3]) (y "ab")) (pair x y))
+[{1 %a} {1 %b} {2 %a} {2 %b} {3 %a} {3 %b}]
+
+pfc> (letzf ((x [1 2 3]) (y "ab")) (pair x y))
+[{1 %a} {1 %b} {2 %a} {2 %b} {3 %a} {3 %b}]
+
+(define (fact n)
+  (foldr * 1 (take n)))
+
+(letzf ((x [1 2 3]))
+       (pair x ()))
+
+(1- 3)
+(define (0= n)
+  (= 0 n))
+
+(0= 88)
+
+(take 10 (from 1))
+
+(last (from 1))
+
+(define range
+  (lambda (start end)
+    (take (1+ (- end start))
+          (from start))))
+
+(range 10 20)
+
+(cdr ['foo 'bar 'baz])
+
+(define (my-last lst)
+  (if (cons? (cdr lst))
+      (my-last (cdr lst))
+      (car lst)))
+
+(def (my-last lst)
+  (if (null (cdr lst))
+      lst
+      (my-last (cdr lst))))
+
+(my-last "abcd")
+(list->vector '(%a %b))
+(vector->string {%a})
+(symbol->string 'a)
+(display {%a %b})
+(display {%a %b})
+
+(null {1})
+(null "")
+
+(my-last '(a b c d))
+;=> (d)
+['a 'b] => ;(list 'a 'b)
+(null? [])
+(cons 'a 'b)
+
+(pair 'a 'b)
+=> {a b}
+;=> error
+
+((lambda (x) [x]) 'foo)
+(cdr '(a))
+
+(cons 'a ())
+
+(rest '(a b c))
+
+(consp ())
+
+(cons? [])
+(null? [])
+(car [])
+(cdr [])
+(my-last [1 2 3 4])
+(last [1 2])
+
+(atom? [1 2])
+(cons? [ 1 2])
+(pair? [1 2])
+
+(define (cycle x)
+  (append x (fizz x)))
+
+(take 10 (cycle [1 2 "fizz"]))
+
+(define (fizz-buzz x)
+  (if))
+
+((lambda()"foo"))
+
+(append [1 2 3] [4 5 6])
+
+
+(def (my-last lst)
+  (if (null (tl lst))
+      lst
+      (my-last (tl lst))))
+
+(def (my-last lst)
+  ((! lst) (1- (length lst))))
+
+;; ~~~
+(index '(0 1 2 3) 0) ; or (! '(0 1 2 3) 0)
+;=> 0
+
+(let ((!lst (! '(0 1 2 3))))
+  (!lst 0))
+;=> 0
+
+(cdr '(1 2 3 4 5))
+(cdr )
+
+(def tenth (nth 9))
+
+(tenth '(0 1 2 3 4 5 6 7 8 9))
+
+(define (my-last lst)
+  (drop (1- (length lst)) lst))
+
+(define (my-last lst)
+  [((! lst) (1- (length lst)))])
+
+(map (+ 1) [1 2 3 4 5])
+(zerop 0)
+
+(def (foo x)
+     (let ((q nil))
+       (def (q y)
+            x)
+       (q nil)))
+
+(foo 8)
+
+(&& #t (progn (display "hello") #t))
+
+(seq 1 2 3)
+
+(and #t #f #t)
+(or #f #f #t)
+
+($or null consp)
+
+(((&& cons) null) '(foo))
+
+
+((flip - 2) 3)
+(my-last [0 1 2 3 4])p
+
+
+((compose 1+ 1-) 0)
+((compose cdr cdr))
+(drop 3  [1 2 3 4 5 6])
+
+((cdr ) [1 2 3])
+(my-last [1 2 3 4])
+
+(def (my-last lst)
+  ((! lst) (1- (length lst))))
+
+(my-last '(1 2 3 4))
+
+(define (my-last lst)
+  (nth (length lst)))
+
+((my-last '(1 2 3)) '(1 2 3))
+((nth (+ 1 1)) '(1 2 3 4 5))
+((nth 0) '(1 2 3))
+(nth 0 '(1 2 3))
+(my-last '(1 2 3))
+
+(def (last2 lst)
+  (drop (- (length lst) 2) lst))
+
+(def (last2 lst)
+  (let ((*last2 (drop (- (length lst) 2))))
+    (*last2 lst)))
+
+(last2 [1 2 3 4])
+
+(def (last2 lst)
+     (let ((len-2 (compose (+ -2) length)))
+       (drop (len-2 lst) lst)))
+
+(last2 '(foo bar baz))
+
+(def (last2 lst)
+  (if (>= 2 (length lst))
+      lst
+      (last2 (cdr lst))))
+
+(last2 '(foo bar baz))
+(last2 ['a])
+
+
+(last2 '(foo bar baz))
+
+
+;P03 (*) Find the K'th element of a list.
+;    The first element in the list is number 1.
+;    Example:
+;    * (element-at '(a b c d e) 3)
+;    C
+
+(def (element-at lst k)
+  (if (null lst) 
+      ()
+      (if (>= 1 k)
+          (hd lst)
+          (element-at (tl lst) (1- k)))))
+
+;(element-at '(a b c d e) 100)
+;=> c
+
+(nth 0 [0 1 2 3 4])
+
+;P04 (*) Find the number of elements of a list.
+
+(length '(1 2 3 4))
+
+(def (len lst)
+  (if (null lst)
+      0
+      (1+ (len (tl lst)))))
+
+(len '(1 2 3 4))
+;=> 4
+
+;P05 (*) Reverse a list.
+
+(define (rev lst)
+  (if (null lst)
+      ()
+      (append (rev (tl lst)) [(hd lst)])))
+
+(def (rev lst)
+  (if (null lst)
+      ()
+      (++ (rev (tl lst)) [(hd lst)])))
+
+(rev '(1 2 3 4 5))
+
+[(hd '(1 2 3))]
+
+(palindrome? '(x a m a x))
+;=> #t
+
+(def (palindrome? lst)
+  (= (rev lst) lst))
+
+
+(eqv? '(x y z) '(x y z))
+
+;P07 (**) Flatten a nested list structure.
+;    Transform a list, possibly holding lists as elements into a `flat' list by replacing each list with its elements (recursively).
+;
+;    Example:
+;    * (my-flatten '(a (b (c d) e)))
+;    (A B C D E)
+;
+;    Hint: Use the predefined functions list and append.
+
+(flatten '(1 2 3 4))
+
+(define (flatten lst)
+  (if (null? lst)
+      ()
+      (if (atom (car lst))
+          (cons (car lst)
+                (flatten (cdr lst)))
+          (++ (flatten (car lst))
+              (flatten (cdr lst))))))
+
+
+
+(define (flatten lst)
+  (let ((a ())
+        (b (cons (car lst)
+                (flatten (cdr lst))))
+        (c (++ (flatten (car lst))
+              (flatten (cdr lst)))))
+    (if (null? lst)
+        a
+        (if (atom (car lst))
+            b
+            c))))
+
+
+(define (flatten lst)
+  (let ((p1 (if (null? lst)))
+        (p2 (if (atom (car lst))))
+        (a ())
+        (b (cons (car lst)
+                (flatten (cdr lst))))
+        (c (++ (flatten (car lst))
+              (flatten (cdr lst)))))
+    (p1 a (p2 b c))))
+
+
+(define (flatten lst)
+  (if (null? lst)
+      ()
+      (let ((h (hd lst)) 
+            (t (tl lst)))
+        ((if (atom h)
+             (cons h)
+             (++ (flatten h)))
+         (flatten t)))))
+
+(define (flatten lst)
+  (if (null? lst)
+      ()
+      ((if (atom (hd lst))
+           (cons (hd lst))
+           (++ (flatten (hd lst))))
+       (flatten (tl lst)))))
+
+
+(define (flatten lst)
+  (if (null? lst)
+      ()
+      (((if (atom (hd lst)) (cons) (compose ++ flatten))
+        (hd lst))
+       (flatten (tl lst)))))
+
+(define (flatten lst)
+  (if (null? lst)
+      ()
+      (let ((f (if (atom (hd lst))
+                   (cons)
+                   (compose ++ flatten))))
+        (f (hd lst)
+           (flatten (tl lst))))))
+
+
+(define (flatten lst)
+  (if (null? lst)
+      ()
+      (((if (atom (hd lst))
+            (compose cons hd)
+            (compose (compose ++ flatten)) hd)
+        lst)
+       (flatten (tl lst)))))
+
+
+
+(flatten '((0 (1 ((((2 (((((3 (((4)))))))) 5))))) (6 (7 8) 9))))
+;=> [0 1 2 3 4 5 6 7 8 9]
+
+(let ((p (++ (1 2 3)))
+      (a (cons (1 2 3))))
+  ((if #t p a)e '(1 2 3)))
+
+((flip cons '(b c d)) 'a)
+
+(flip '(a b))
+
+
+(flatten '(a (b (c d) e)))
+(atom 'a)
+
+(cons 1 '(2 3 4))
+
+(pair? '(a))
+
+(++ '(1 2 3) '(4 5 6))
+(cons 1 '(1 2 3))
+
+
+((if) #t 3 6)
+
+
+(+ 3 3)
+(display (if 3 3 3))
+
+;P08 (**) Eliminate consecutive duplicates of list elements.
+;    If a list contains repeated elements they should be replaced with a single copy of the element. The order of the elements should not be changed.
+;
+;    Example:
+;    * (compress '(a a a a b c c a a d e e e e))
+;    (A B C A D E)
+
+
+(define (compless lst)
+  (let ((res (hd lst)))
+    (if (null? (cdr lst))
+        )))
+
+(define compress
+    [ ] -> [ ]
+    [H T] -> [H] where (= H T)
+    [H | [T | U]] -> (compress [T | U]) where (= H T)
+    [H | T] -> [H | (compress T)])
+
+(define (compress lst)
+  (if (null? lst)
+      ()
+      (if (if (consp (tl lst)) (= (hd lst) (hd (tl lst))) #f)
+          (compress (tl lst))
+          (cons (hd lst) (compress (tl lst))))))
+
+(define (compress lst)
+  (if (null? lst)
+      ()
+      (if (and [(consp (tl lst)) (= (hd lst) (hd (tl lst)))])
+          (compress (tl lst))
+          (cons (hd lst) (compress (tl lst))))))
+
+(define (compress lst)
+  (if (null? lst)
+      ()
+      ((if (and [(consp (tl lst)) (= (hd lst) (hd (tl lst)))])
+           (lambda (x) x)
+           (cons (hd lst)))
+       (compress (tl lst)))))
+
+((lambda (x y) y) 1 2)
+
+(compress '(a a a a b c c a a d e e e e))
+
+
+
+(and [])
+(and [#t #f])
+
+
+(reverse '(1 2 3 4))
+
+;P09 (**) Pack consecutive duplicates of list elements into sublists.
+;    If a list contains repeated elements they should be placed in separate sublists.
+;
+;    Example:
+;    * (pack '(a a a a b c c a a d e e e e))
+;    ((A A A A) (B) (C C) (A A) (D) (E E E E))
+
+(define (pack1 lst tem res)
+  (if (consp (cdr lst))
+      (if (= (car lst) (car (cdr lst)))
+          (pack1 (cdr lst) 
+                 (++ [(car lst)] tem)
+                 res)
+          (pack1 (cdr lst) 
+                 ()
+                 (++ res [(cons (car lst) tem)])))
+      (++ res [(cons (car lst) tem)])))
+
+
+
+(define (pack lst)
+  (if (null lst)
+      ()
+      (pack1 lst () ())))
+
+(define (pack1 lst tem res)
+  (let ((head (hd lst))
+        (tail (tl lst)))
+    (if (consp tail)
+        (if (= head (hd tail))
+            (pack1 tail 
+                   (++ [head] tem)
+                   res)
+            (pack1 tail 
+                   ()
+                   (++ res [(cons head tem)])))
+        (++ res [(cons head tem)]))))
+
+
+(letrec ((a 1))
+  a)
+
+(apply + 2)
+
+((compose car cdr) '(1 2 3 4))
+
+(pack '(a a a a b c c a a d e e e e))
+(pack '(a))
+
+
+
+(pack1 '(a a a a b c c a a d e e e e)
+       ()
+       () )
+
+(pack1 ()
+       ()
+       () )
+(pack '(a a a a b c c a a d e e e e))
+
+;P10 (*) Run-length encoding of a list.
+;    Use the result of problem P09 to implement the so-called run-length encoding data compression method. Consecutive duplicates of elements are encoded as lists (N E) where N is the number of duplicates of the element E.
+
+;    Example:
+;    * (encode '(a a a a b c c a a d e e e e))
+;    ((4 A) (1 B) (2 C) (2 A) (1 D)(4 E))
+
+
+(encode '(a a a a b c c a a d e e e e))
+;==> [[4 a] [1 b] [2 c] [2 a] [1 d] [4 e]]
+
+[[a a a a] [b] [c c] [a a] [d] [e e e e]]
+
+(define (encode lst)
+  (map (lambda (x) [(length x) (hd x)])
+       (pack lst)))
+
+(define (single? lst)
+  (and [(consp lst)
+        (null (tl lst))]))
+
+(define (encode-modified lst)
+  (map (lambda (x) 
+         (if (single? x)
+             (hd x)
+             [(length x) (hd x)]))
+       (pack lst)))
+
+(define (encode-modified lst)
+  (map (if (single? x)
+           (hd x)
+           [(length x) (hd x)])
+       (pack lst)))
+
+(encode-modified '(a a a a b c c a a d e e e e))
+;=> [[4 a] b [2 c] [2 a] d [4 e]]
+
+(define (single? lst)
+  (and [(consp lst)
+        (null (tl lst))]))
+
+(define (encode-modified lst)
+  (let ((single? (lambda (obj)
+                   (and [(consp obj)
+                         (null (tl obj))]))))
+    (map (lambda (x) 
+           (if (single? x)
+               (hd x)
+               [(length x) (hd x)]))
+       (pack lst))))
+
+;; (define (encode-modified lst)
+;;   (let ((single? (lambda (obj)
+;;                    (and [(consp obj)
+;;                          (null (tl obj))]))))
+;;     (map (lambda (x) 
+;;            (if (single? x)
+;;                (hd x)
+;;                (pair (length x) (hd x))))
+;;        (pack lst))))
+
+
+
+;Example:
+;* (encode-modified '(a a a a b c c a a d e e e e))
+;((4 A) B (2 C) (2 A) D (4 E))
+
+
+
+;P12 (**) Decode a run-length encoded list.
+;    Given a run-length code list generated as specified in problem P11. Construct its uncompressed version.
+
+
+(def (item-list item)
+  (++ [item] (item-list item)))
+
+
+
+(define (decode lst)
+  (if (null lst)
+      ()
+      (let ((head (hd lst)))
+        (++ (if (atom head)
+                [head]
+                (take (hd head)
+                      (item-list (hd (tl head)))))
+            (decode (tl lst))))))
+
+(define (item-list item)
+  (cons item (item-list item)))
+
+
+(define (decode lst)
+  (if (null lst)
+      ()
+      (let ((head (car lst)))
+        head)))
+
+(decode '((4 A) B (2 C) (2 A) D (4 E)))
+
+(display 'a)
+(cons 1 '(1 2 3))
+  
+(fst {1 2})
+
+
+(decode ())
+
+
+
+
+
+(take 3 '(1 2 3 4 5))
+
+
+
+
+(take 3 (item-list 'a))
+
+
+(pair 3 '())
+
+
+(id 3)
+

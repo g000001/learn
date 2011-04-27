@@ -1,0 +1,18 @@
+;; 01 last
+
+(define my-last
+    (((*x . () )) *x))
+
+(define my-last)
+(assert (my-last (*x . () ) *x))
+(assert (my-last (*h . *t) *x)
+        (my-last *t *x))
+
+
+(define my-last
+  (((*x . () ) *x))
+  (((*h . *t) *x)
+    (my-last *t *x)))
+
+
+

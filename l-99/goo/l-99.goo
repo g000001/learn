@@ -1,0 +1,1033 @@
+;(df my-last (lst)
+;    (if (nul? (tail lst))
+;        (head lst)
+;        (my-last (tail lst))))
+;
+;(my-last '(foo bar baz))
+;
+;(nul? '(foo bar baz))
+;(len '(foo bar baz))
+;
+;(last '(foo bar baz))
+;
+;(let ((l '(foo bar baz)))
+;  (tail l))
+;
+;(lst 'x 'y 'z)
+;(list 'x 'y 'z)
+;
+;(range 1 10)
+;(each print '(foo bar baz))
+;(say out "foo")
+;(puts out "foo")
+;
+;(each (op ))
+;
+;(each  '(1 2 3 4))
+;
+;((op write out _) 3)
+;
+;(each (fun (x) (+ 3 x)))
+;
+;(each head)
+;
+
+;(range 1 10)
+
+;P01 (*) Find the last box of a list.
+;    Example:
+;    * (my-last '(a b c d))
+;    (D)
+(df my-last (u) 
+  (if (nul? (tail u))
+      u
+      (my-last (tail u))))
+
+;* (my-last '(a b c d))
+;=> (d)
+
+;(my-last '(1 2 3 4))
+;(my-last '())
+
+;(tail (tail '()))
+
+
+;P02 (*) Find the last but one box of a list.
+;    Example:
+;    * (my-but-last '(a b c d))
+;    (C D)
+(dm my-but-last ((u <lst>))
+  (if (nul? (tail (tail u)))
+      u
+      (my-but-last (tail u))))
+
+(my-but-last '(1 2 3 4))
+;=> (3 4)
+
+;P03 (*) Find the K'th element of a list.
+;    The first element in the list is number 1.
+;    Example:
+;    * (element-at '(a b c d e) 3)
+;    C
+
+;(elt '(a b c d e) 2)
+;(pos '(a b c d e) 'c)
+
+(dm element-at ((u <lst>) (k <int>))
+  (rep loop ((u u) (cnt 1))
+    (if (or (= k cnt) (nul? u))
+        (head u)
+        (loop (tail u) (1+ cnt)))))
+
+;(element-at '(a b c d e) 3)
+;=> c
+(elt '(a b c d e) 2)
+
+;(element-at '(1 2 3) -3)
+
+
+;P04 (*) Find the number of elements of a list.
+
+(dm my-len ((u <lst>))
+  (if (nul? u)
+      0
+      (+ 1 (my-len (tail u)))))
+
+(dm my-len ((u <lst>))
+  (if (nul? u)
+      0
+      (+ 1 (my-len (tail u)))))
+
+(df fib (n|<int> => <int>)
+    (if (< n 2)
+        n
+        (+ (fib (1- n))
+           (fib (- n 2)))))
+
+
+(dm my-len (u|<lst>)
+  (if (nul? u)
+      0
+      (+ 1 (my-len (tail u)))))
+
+(dm my-len (u|<flat>)
+  (def cnt 0)
+  (for ((x u)) 
+      (incf cnt))
+  cnt)
+
+(my-len #(1 2 3 4))
+(my-len "1234")
+
+(dm my-len (u|<int> => <int>)
+    u)
+
+(my-len '(1 2 3 4))
+(my-len 3)
+;=> 4
+
+;(len '(1 2 3 4))
+
+;---
+
+;(say out "hello\n")
+
+;P05 (*) Reverse a list.
+
+
+(dm my-rev (u|<flat>)
+  (def res ())
+  (for ((x u))
+      (pushf res x))
+  (as (class-of u) res))
+
+;(my-rev '(1 2 3 4)) ;=> (4 3 2 1)
+;(my-rev "foo") ;=> "oof"
+;(my-rev #(a b c)) ;=> #(c b a)
+;(my-rev #[a b c]) ;=> #[c b a]
+
+
+(dm my-rev (u|<lst>)
+  (if (nul? u)
+      ()
+      (match u 
+        ((,H ,@T) (cat (my-rev T) (lst H))))))
+
+
+(my-rev #[a b c])
+
+(as (class-of "") '(#\1 #\2 #\3 #\4))
+
+(let ((res () ))
+  (for ((x #(foo bar baz)))
+      (pushf res x))
+  res)
+
+(let ((res ()))
+  (pushf res 'x)
+  res)
+
+;P06 (*) Find out whether a list is a palindrome.
+;    A palindrome can be read forward or backward; e.g. (x a m a x).
+
+;(palindrome '(x a m a x)) ;=> #t
+;(palindrome #(x a m a x)) ;=> #t
+;(palindrome "xamax")      ;=> #t
+;(palindrome 12321)        ;=> #t
+
+(dm palindrome (u|<col>)
+  (= u (rev u)))
+
+(dm palindrome (u|<num>)
+  (palindrome (num-to-str u)))
+
+;P07 (**) Flatten a nested list structure.
+;    Transform a list, possibly holding lists as elements into a `flat' list by replacing each lst with its elements (recursively).
+
+;    Example:
+;    * (my-flatten '(a (b (c d) e)))
+;    (A B C D E)
+
+;    Hint: Use the predefined functions list and append.
+
+(dm flatten (u|<lst> => <lst>)
+  (cond ((nul? u) () )
+        ((lst? (head u))
+         (cat (flatten (head u))
+              (flatten (tail u))))
+        (#t (pair (head u)
+                  (flatten (tail u))))))
+
+(df lst? (u|<any> => <log>)
+  (subtype? (class-of u) <lst>))
+
+(flatten ())
+(flatten '(a))
+(flatten '((a) b))
+(flatten '(1 2 3 4 5 6 (8)))
+(flatten '(1 () 2 3 4 5 6 ((7((((())))))) (8)))
+(flatten '(1 (a b) (c d) 2 3 4 5 6 (8)))
+
+(df cons? (u|<any> => <log>)
+  (and (subtype? (class-of u) <lst>)
+       (not (nul? u))))
+
+(df atom? (u|<any> => <log>)
+  (not (cons? u)))
+
+(seq 
+ (def i (enum '(1 2 3 4)))
+ (nxt i)
+ (now i)
+ (nxt i)
+ (now i)
+ 
+ )
+
+;; P08 (**) Eliminate consecutive duplicates of list elements.  If a
+;;     list contains repeated elements they should be replaced with
+;;     a single copy of the element. The order of the elements
+;;     should not be changed.
+
+;;     Example:
+;;     * (compress '(a a a a b c c a a d e e e e))
+;;     (A B C A D E)
+
+(dm compress (u|<col> => <col>)
+  (if (empty? u)
+      u
+      (let ((prev (1st u))
+            (but1st (sub u 1 (len u)))
+            (res (lst prev)))
+        (for ((x but1st))
+            (unless (= x prev)
+              (pushf res x)
+              (set prev x)))
+        (as (class-of u) (rev res)))))
+
+(compress "") ;=> ""
+(compress '(a a a a b c c a a d e e e e)) ;=> (a b c a d e)
+(compress #(a a a a b c c a a d e e e e)) ;=> #(a b c a d e)
+(compress #[a a a a b c c a a d e e e e]) ;=> #[a b c a d e]
+(compress "aaaabccaadeeee") ;=> "abcade"
+(compress "abccaadeeee")
+
+(df dupli (u)
+    (if (nul? u)
+        ()
+        (let ((h (head u)) (t (tail u)))
+          `(,h ,h ,@(dupli t)))))
+
+(dupli '(1 2 3 4 5))
+
+;;; (df lst->gen (u|<lst>)
+;;;     (let ((caller #f))
+;;;       (loc ((gen ()
+;;;                  (rep self ((u u))
+;;;                       (cond ((nul? u) 'fallthru)
+;;;                             ((isa? u <lst>)
+;;;                              (match u ((,H ,@T))
+;;;                                (self H)
+;;;                                (self T)))
+;;;                             (#t )))) ))))
+
+(dm compress (u|<col> => <col>)
+  (if (empty? u)
+      u
+      (let ((prev (1st u))
+            (but1st (sub u 1 (len u)))
+            (res (packer-fab <lst>)))
+        (pack-in res prev)
+        (for ((x but1st))
+            (unless (= x prev)
+              (pack-in res x)
+              (set prev x)))
+        (as (class-of u) (packed res)))))
+
+(dm compress (u|<col> => <col>)
+  (if (empty? u)
+      u
+      (let ((prev (1st u))
+            (but1st (sub u 1 (len u))))
+        (as (class-of u)
+            (packing
+             (pack prev)
+             (for ((x but1st))
+                 (unless (= x prev)
+                   (pack x)
+                   (set prev x))))))))
+
+(compress '(a a a a b c d e e e f f))
+
+
+;P09 (**) Pack consecutive duplicates of list elements into sublists.
+;    If a list contains repeated elements they should be placed in separate sublists.
+;
+;    Example:
+;    * (pack '(a a a a b c c a a d e e e e))
+;    ((A A A A) (B) (C C) (A A) (D) (E E E E))
+
+(dm my-pack (u|<col> => <col>)
+  (if (empty? u)
+      u
+      (let ((prev (1st u))
+            (tem () )
+            (res () ))
+        (for ((x u))
+          (if (= x prev)
+              (pushf tem x)
+              (seq
+               (pushf res (rev tem))
+               (set tem () )
+               (pushf tem x)))
+          (set prev x))
+        (pushf res (rev tem))
+        (as (class-of u) (rev res)))))
+
+(dm my-pack (u|<col> => <col>)
+  (if (empty? u)
+      u
+      (let ((prev (1st u))
+            (tem () )
+            (res () ))
+        (for ((x u))
+            (unless (= x prev)
+              (pushf res (rev tem))
+              (set tem () ))
+          (pushf tem x)
+          (set prev x))
+        (pushf res (rev tem))
+        (as (class-of u) (rev res)))))
+
+(dm my-pack (u|<col> => <col>)
+  (if (empty? u)
+      u
+      (let ((prev (1st u))
+            (tem () ))
+        (as (class-of u) 
+            (packing
+             (for ((x u))
+                 (unless (= x prev)
+                   (pack (rev tem))
+                   (set tem () ))
+               (pushf tem x)
+               (set prev x))
+             (pack (rev tem)))))))
+
+(dm my-pack (u|<col> => <col>)
+  (if (empty? u)
+      u
+      (let ((prev (1st u))
+            (tem () ))
+        (as (class-of u) 
+            (packing-with ((res (packer-fab <lst>)))
+             (for ((x u))
+                 (unless (= x prev)
+                   (pack-in res (rev tem))
+                   (set tem () ))
+               (pushf tem x)
+               (set prev x))
+             (pack-in res (rev tem))
+             (packer-res res))))))
+
+(dm my-pack (u|<col> => <col>)
+  (if (empty? u)
+      u
+      (as (class-of u) (my-pack1 u))))
+
+(dm my-pack (u|<str> => <str>)
+  (if (empty? u)
+      u
+      (join (map (op as <str> _) 
+                 (my-pack1 u))
+            ",")))
+
+(df my-pack1 (u|<col> => <lst>)
+  (let ((prev (1st u))
+        (res (packer-fab <lst>))
+        (tem (packer-fab <lst>)))
+    (for ((x u))
+      (unless (= x prev)
+        (pack-in res (packed tem))
+        (set tem (packer-fab <lst>)))
+      (pack-in tem x)
+      (set prev x))
+    (pack-in res (packed tem))
+    (packed res)))
+
+;=> ((a a a a) (b) (c c) (a a) (d) (e e e e))
+;   ((a a a a) (b) (c c) (a a) (d) (e e e e))
+
+;P10 (*) Run-length encoding of a list.
+;    Use the result of problem P09 to implement the so-called
+;    run-length encoding data compression method. Consecutive
+;    duplicates of elements are encoded as lists (N E) where N is
+;    the number of duplicates of the element E.
+;
+;    Example:
+;    * (encode '(a a a a b c c a a d e e e e))
+;    ((4 A) (1 B) (2 C) (2 A) (1 D)(4 E))
+
+(my-pack '(a a a a b c c a a d e e e e))
+
+;4.a;1.b;1.c;1.a;d;e
+
+(dm encode (u|<col> => <col>)
+  (as (class-of u)
+      (map (fun (x) `(,(len x) ,(head x)))
+           (my-pack1 u))))
+
+(dm encode (u|<str> => <str>)
+  (join (map (fun (x) (cat (to-str (len x)) ";" (to-str (head x))))
+             (my-pack1 u))
+        ","))
+
+(encode '(a a a a b c c a a d e e e e))
+;=> ((4 a) (1 b) (2 c) (2 a) (1 d) (4 e))
+(encode #(a a a a b c c a a d e e e e))
+;=> #((4 a) (1 b) (2 c) (2 a) (1 d) (4 e))
+(encode #[a a a a b c c a a d e e e e])
+;=> #[(4 a) (1 b) (2 c) (2 a) (1 d) (4 e)]
+(encode "aaaabccaadeeee")
+;=> "4;a,1;b,2;c,2;a,1;d,4;e"
+
+((op list (list (list _))) 3)
+;-> (((3)))
+
+;P11 (*) Modified run-length encoding.
+;
+;    Modify the result of problem P10 in such a way that if an
+;    element has no duplicates it is simply copied into the result
+;    list. Only elements with duplicates are transferred as (N E)
+;    lists.
+;
+;    Example:
+;    * (encode-modified '(a a a a b c c a a d e e e e))
+;    ((4 A) B (2 C) (2 A) D (4 E))
+
+#/
+(ds aif (,pred ,con ,alt)
+  `(let ((it ,pred))
+     (if it
+         ,con
+         ,alt)))
+/#
+
+(dm encode-modified (u|<col> => <col>)
+  (as (class-of u)
+      (map (fun (x) (let ((xlen (len x)))
+                      (if (= 1 xlen)
+                          (head x)
+                          `(,xlen ,(head x)))))
+           (my-pack1 u))))
+
+;    * (encode-modified '(a a a a b c c a a d e e e e))
+;    ((4 a) b (2 c) (2 a) d (4 e))
+;    ((4 A) B (2 C) (2 A) D (4 E))
+
+(dm encode-modified (u|<str> => <str>)
+  (join (map (fun (x) (let ((xlen (len x)))
+                        (cat (if (= 1 xlen) "" (cat (to-str xlen) ";"))
+                             (to-str (head x)))))
+             (my-pack1 u))
+        ","))
+
+;; (encode-modified "aaaabccaadeeee")
+;; "4;a,b,2;c,2;a,d,4;e"
+
+
+;P12 (**) Decode a run-length encoded list.
+;    Given a run-length code list generated as specified in
+;    problem P11. Construct its uncompressed version.
+
+(encode '(a a a a b c c a a d e e e e))
+;=> ((4 a) (1 b) (2 c) (2 a) (1 d) (4 e))
+
+
+;;
+;(dm decode (u|<col> => <col>)
+;;    (def res (packer-fab <lst>))
+;;    (for ((item u))
+;;        (def (tup n item) item)
+;;        (pack-in res (repeat `(,item) n)))
+;;    (as (class-of u)
+;;        (app cat (packed res))))
+;;
+(dg decode (u|<seq> => <seq>))
+
+(dm decode (u|<seq> => <seq>)
+  (def res () )
+  (for ((item u))
+    (def (tup n item) item)
+    (opf res (cat _ (repeat `(,item) n))))
+  (as (class-of u) res))
+
+(dm decode (u|<str> => <str>)
+  (let ((res "")
+        (items (split u #\,)))
+    (for ((x items))
+      (def (tup n item) (split x #\;))
+      (opf res (cat _ (repeat item (str-to-num n)))))
+    res))
+
+(decode '((4 a) (1 b) (2 c) (2 a) (1 d) (4 e)))
+;=> (a a a a b c c a a d e e e e)
+(decode #((4 a) (1 b) (2 c) (2 a) (1 d) (4 e)))
+;=> #(a a a a b c c a a d e e e e)
+(decode #[(4 a) (1 b) (2 c) (2 a) (1 d) (4 e)])
+;=> #[a a a a b c c a a d e e e e]
+(decode "4;a,1;b,2;c,2;a,1;d,4;e")
+;=> "4;a,1;b,2;c,2;a,1;d,4;e"
+
+;P13 (**) Run-length encoding of a list (direct solution).  Implement
+;    the so-called run-length encoding data compression method
+;    directly. I.e. don't explicitly create the sublists containing
+;    the duplicates, as in problem P09, but only count them. As in
+;    problem P11, simplify the result list by replacing the singleton
+;    lists (1 X) by X.
+;    Example:
+;    * (encode-direct '(a a a a b c c a a d e e e e))
+;    ((4 A) B (2 C) (2 A) D (4 E))
+
+(dg encode-direct (u|<seq> => <seq>))
+
+(dm encode-direct (u|<seq> => <seq>)
+  (if (empty? u)
+      u
+      (let ((cnt 0)
+            (prev (elt u 0))
+            (res (packer-fab <lst>)))
+        (for ((x `(,@(as <lst> u) ,(gensym))))
+            (if (= prev x)
+                (incf cnt)
+                (seq 
+                 (pack-in res (if (= 1 cnt) prev `(,cnt ,prev)))
+                 (set cnt 1)
+                 (set prev x))))
+        (as (class-of u) (packed res)))))
+
+
+(dm encode-direct (u|<str> => <str>)
+  (join (map (fun (x) 
+                  (if (cons? x)
+                      (let (((tup num item) x))
+                        (cat (to-str num) ";" (to-str item)))
+                      (to-str x)))
+             (sup (as <lst> u)))
+        ","))
+
+(dm encode-direct (u|<str> => <str>)
+  (if (empty? u)
+      u
+      (let ((cnt 0)
+            (prev (elt u 0))
+            (res (packer-fab <lst>)))
+        (for ((x `(,@(as <lst> u) ,(gensym))))
+            (if (= prev x)
+                (incf cnt)
+                (seq 
+                 (pack-in res (if (= 1 cnt) 
+                                  (to-str prev)
+                                  (cat (to-str cnt) ";" (to-str prev))))
+                 (set cnt 1)
+                 (set prev x))))
+        (as (class-of u) (join (packed res) ",")))))
+
+
+(encode-direct "aaaabccaadeeee")
+(encode-direct "")
+
+(df cons? (u|<any> => <log>)
+  (and (subtype? (class-of u) <lst>)
+       (not (nul? u))))
+
+(cons? '(a))
+
+(map (fun (x) (if (cons? x)
+                  ))
+     '((4 a) b (2 c) (2 a) d (4 e)))
+
+(= <lst> (class-of 1))
+
+(join (map (fun (x) (if (cons? x)
+                        (let (((tup num item) x))
+                          (cat (to-str num) ";" (to-str item)))
+                        (to-str x)))
+           (encode-direct '(a a a a b c c a a d e e e e)))
+        ",")
+
+
+(join '("a" "b") #\,)
+(encode-direct '(a a a a b c c a a d e e e e))
+;=>  ((4 a) b (2 c) (2 a) d (4 e))
+(encode-direct #[a a a a b c c a a d e e e e])
+;=> #[(4 a) b (2 c) (2 a) d (4 e)]
+(encode-direct #(a a a a b c c a a d e e e e))
+;=> #((4 a) b (2 c) (2 a) d (4 e))
+(encode-direct "aaaabccaadeeee")
+;=> "4;a,b,2;c,2;a,d,4;e"
+(encode-direct (as <lst> "aaaabccaadeeee"))
+
+
+;(load "/u/mc/lisp/Work/L-99/l99.goo" 'goo/user)
+
+;(load "/usr/local/var/tmp/swank-goo.goo" 'goo/user)
+
+
+;(df f () #{ printf(“goo sucks\n”); })
+
+;P14 (*) Duplicate the elements of a list.
+;    Example:
+;    * (dupli '(a b c c d))
+;    (A A B B C C C C D D)
+
+(dg dupli (u|<seq> => <seq>))
+
+(dm dupli (u|<seq> => <seq>)
+  (def res (packer-fab <lst>))
+  (for ((x u))
+    (pack-in res x)
+    (pack-in res x))
+  (as (class-of u) (packed res)))
+
+;(dupli '(a b c c d))
+;=> (a a b b c c c c d d)
+
+;(dupli #(a b c c d))
+;=> #(a a b b c c c c d d)
+
+;(dupli #[a b c c d])
+;=> #[a a b b c c c c d d]
+
+;(dupli "abccd")
+;=> aabbccccdd
+
+;P15 (**) Replicate the elements of a list a given number of times.
+;    Example:
+;    * (repli '(a b c) 3)
+;    (A A A B B B C C C)
+
+(dg repli (u|<seq> times|<int> => <seq>))
+
+(dm repli (u|<seq> times|<int> => <seq>)
+  (def res (packer-fab <lst>))
+  (for ((x u))
+    (for ((i (range 1 <= times)))
+      (pack-in res x)))
+  (as (class-of u) (packed res)))
+
+;(repli '(a b c c d) 3)
+;=> (a a a b b b c c c c c c d d d)
+
+;(repli #(a b c c d) 3)
+;=> #(a a a b b b c c c c c c d d d)
+
+;(repli #[a b c c d] 3)
+;=> #[a a a b b b c c c c c c d d d]
+
+;(repli "abccd" 3)
+;=> aabbccccdd
+
+
+;(drop '(a b c d e f g h i j k) 3)
+;=> (a b d e g h j k)
+
+;(drop #(a b c d e f g h i j k) 3)
+;=> #(a b d e g h j k)
+
+;(drop #[a b c d e f g h i j k] 3)
+;=> #[a b d e g h j k]
+
+;(drop "abcdefghijk" 3)
+;=> "abdeghjk"
+
+;(P16 周期Nで要素を間引く)
+
+(app cycle (range 1 <= 3))
+
+(as <lst> )
+
+(dg drop (u|<seq> n|<int> => <seq>))
+
+(dm drop (u|<seq> n|<int> => <seq>)
+  (def res (packer-fab <lst>))
+  (for ((x u)
+        (cnt (from 1)))
+      (unless (zero? (rem cnt n))
+        (pack-in res x)))
+  (as (class-of u) (packed res)))
+
+
+;P17 (*) Split a list into two parts; the length of the first part is given.
+;    Do not use any predefined predicates.
+;
+;    Example:
+;    * (my-split '(a b c d e f g h i k) 3)
+;    ( (A B C) (D E F G H I K))
+
+(dg my-split (u|<seq> pos|<int> => <seq>))
+
+(dm my-split (u|<seq> pos|<int> => <seq>)
+  (tup (sub u 0 pos) (sub* u pos)))
+
+(my-split '(a b c d e f g h i k) 3)
+;==> #((a b c) (d e f g h i k))
+
+(my-split #(a b c d e f g h i k) 3)
+;==> #((a b c) (d e f g h i k))
+
+(my-split #[a b c d e f g h i k] 3)
+;==> #(#[a b c] #[d e f g h i k])
+
+(my-split "abcdefghik" 3)
+;==> #("abc" "defghik")
+
+(sub #(1 2 3 4 5) 0 100)
+
+(split '(1 2 3 4 5) 3)
+
+
+
+(split )
+
+(say out "ははあほん")
+
+(class-of #())
+
+;P18 (**) Extract a slice from a list.
+;    Given two indices, I and K, the slice is the list containing the elements between the I'th and K'th element of the original list (both limits included). Start counting the elements with 1.
+;
+;    Example:
+;    * (slice '(a b c d e f g h i k) 3 7)
+;    (C D E F G)
+
+(dg slice (u|<seq> s|<int> e|<int> => <seq>))
+
+(dm slice (u|<seq> s|<int> e|<int> => <seq>)
+  (def res (packer-fab <lst>))
+  (for ((x u)
+        (i (from 1)))
+      (when (and (<= s i) (<= i e))
+        (pack-in res x)))
+  (as (col-res-type u) (packer-res res)))
+
+(slice '(a b c d e f g h i k) 3 7)
+;==> (c d e f g)
+(slice #(a b c d e f g h i k) 3 7)
+;==> #(c d e f g)
+(slice #[a b c d e f g h i k] 3 7)
+;==> #[c d e f g]
+(slice "abcdefghik" 3 7)
+;==> "cdefg"
+
+(dg rotate (u|<seq> p|<int> => <seq>))
+
+(dm rotate (u|<seq> p|<int> => <seq>)
+  (def p (if (> 0 p) (+ p (len u)) p))
+  (app cat (rev (as <lst> (my-split u p)))))
+
+(rotate '(a b c d e f g h) 3)
+;=> (d e f g h a b c)
+(rotate '(a b c d e f g h) -2)
+;=> (g h a b c d e f)
+(rotate #[a b c d e f g h] 3)
+;=> #[d e f g h a b c]
+(rotate #(a b c d e f g h) -2)
+;=> #(g h a b c d e f)
+(rotate "abcdefgh" 3)
+;=> "defghabc"
+(rotate "abcdefgh" -2)
+;=> "ghabcdef"
+
+;p19 (**) rotate a list N places to the left.
+;    Examples:
+;    * (rotate '(a b c d e f g h) 3)
+;    (D E F G H A B C)
+;
+;    * (rotate '(a b c d e f g h) -2)
+;    (G H A B C D E F)
+;
+;    Hint: Use the predefined functions length and append, as well as the result of problem P17.
+
+(cat '(1 2 3 4) '( 2 2 2))
+
+(minus? 1)
+
+(pos '(1 2 3 4) 2)
+
+(df foo (x|<int> y|<int> => <int>)
+    (tup 'bar 'foo))
+
+(dm foo (x|<int> y|<int> => (tup ,x|<int> ,@y|<int>))
+  (tup 'bar 'foo 'baz))
+
+(foo 3 3)
+
+(df foo (x|<int> y|<int> => <lst>)
+    3)
+
+;P20 (*) Remove the K'th element from a list.
+;    Example:
+;    * (remove-at '(a b c d) 2)
+;    (A C D)
+
+(remove-at '(a b c d) 2) ;=> (a c d)
+(remove-at #(a b c d) 2) ;=> #(a c d)  
+(remove-at #[a b c d] 2) ;=> #[a c d]  
+(remove-at "abcd" 2)     ;=> "acd"
+
+(dg remove-at (u|<seq> p|<int> => <seq>))
+
+(dm remove-at (u|<seq> p|<int> => <seq>)
+  (def (tup x y) (my-split u (1- p)))
+  (cat x (sub* y 1)))
+
+
+(remove-at '(a b c d) 2) ;=> (a c d)
+(remove-at #(a b c d) 2) ;=> #(a c d)  
+(remove-at #[a b c d] 2) ;=> #[a c d]  
+(remove-at "abcd" 2)     ;=> "acd"
+
+;P21 (*) Insert an element at a given position into a list.
+;    Example:
+;    * (insert-at 'alfa '(a b c d) 2)
+;    (A ALFA B C D)
+
+
+(dg insert-at (item|<any> u|<seq> p|<int> => <seq>))
+
+(dm insert-at (item|<any> u|<seq> p|<int> => <seq>)
+  (def (tup x y) (my-split u (1- p)))
+  (cat x (lst item) y))
+
+(dm insert-at (item|<any> u|<str> p|<int> => <str>)
+  (def (tup x y) (my-split u (1- p)))
+  (cat x (to-str item) y))
+
+(insert-at 'alpha '(a b c d) 2) ;=> (a alpha b c d)
+(insert-at 'alpha #(a b c d) 2) ;=> #(a alpha b c d)
+(insert-at 'alpha #[a b c d] 2) ;=> #[a alpha b c d]
+(insert-at 'alpha "abcd" 2)     ;=> "aalphabcd"
+
+
+(say out '(foo))
+(let ((x ""))
+  (say x 'foo))
+
+(to-str '(foo bar baz))
+
+(df my-range (start|<num> end|<num> by|... => <seq>)
+  (def ans (packer-fab <lst>))
+  (def by (if (empty? by) 1 (1st by)))
+  (def r (if (<= start end)
+             (range-by start <= end (op + _ by))
+             (range-by start > end (op - _ by))))
+  (for ((x r)) (pack-in ans x))
+  (packer-res ans))
+
+(my-range 4 9)
+;=> (4 5 6 7 8 9))
+(my-range 9 4)
+;=> (9 8 7 6 5 4)
+(my-range 3 3)
+;=> '(3)
+
+
+(seq
+ (def (tup x y) #(1 2))
+ (lst x y))
+
+(1st (2nd ((fun (x y|...) (list x y)) 1 2 3)))
+
+(my-range 1 10)
+
+(iota 10 10)
+
+(if (empty? #(n)) 'yes 'no)
+
+
+(1 2 3 4 5 6 7 8 9 10)
+
+;; P23 (**) Extract a given number of randomly selected elements from a list.
+;;     The selected items shall be returned in a list.
+;;     Example:
+;;     * (rnd-select '(a b c d e f g h) 3)
+;;     (E D A)
+
+;;     Hint: Use the built-in random number generator and the result of problem P20.
+
+
+(df rnd-select (u|<seq> n|<int> => <seq>)
+  )
+
+(df rnd-select1 (acc rest n)
+    )
+
+(dv foo '(1 2 3 4))
+
+(let ((tup x y)
+      (pop (tail foo)))
+  )
+(seq
+ (def (tup x y) (pop foo))
+ (list x y))
+
+(df nthtail (n|<int> u|<list> => <list>)
+  (if (or (empty? u) (zero? n))
+      u
+      (nthtail (- n 1)
+               (tail u))))
+
+(nthtail 0 '(1 2 3 4))
+(pop (nthtail 4 '(1 2 3 4)))
+
+
+(df rnd-select1 (acc rest n)
+    (if (or (zero? n) 
+            (empty? rest))
+        acc
+        (let (((tup nrest item) 
+               (randompop (nthtail (random (- (len rest) 1)) rest))))
+          (rnd-select1 (pair item acc)
+                       nrest
+                       (- n 1)))))
+
+
+
+(random-pop '(1 2 3 4 5))
+
+(for ((e '(1 2 3 4 5)))
+     )
+
+(for ((i (range 1 <= 100)))
+     (def (tup x y) (random-pop '(1 2 3 4 5)) )
+     (say out 
+          ;(rnd-select '(a b c d e f g h) 3)
+          x ":" y
+          "\n"))
+
+(for ((i (range 1 <= 100)))
+     (def (tup x y) (random-pop '(1 2 3 4 5)) )
+     (say out 
+          (rnd-select 
+           '(1 2 3 4)
+           ;'(a b c d e f g h) 
+           3)
+          ;x ":" y
+          "\n"))
+
+(say out 1 "\n")
+
+;(rnd-select '(a b c d e f g h) 3)
+
+(df random-pop (u|<lst> => (tup <lst> <any>))
+    (def rest (packer-fab <lst>))
+    (def item (packer-fab <lst>))
+    (def picknum (random (- (len u) 1)))
+    (for ((e u)
+          (i (from 0)))
+         (if (= picknum i)
+             (pack-in item e)
+             (pack-in rest e)))
+    (tup (packer-res rest)
+         (1st (packer-res item))))
+
+
+(df rnd-select (u|<list> n|<int>)
+    (loc ((self1 (acc rest n)
+                 (if (or (zero? n) 
+                         (empty? rest))
+                     acc
+                     (let (((tup nrest item) 
+                            (random-pop rest)))
+                       (self1 (pair item acc)
+                              nrest
+                              (- n 1))))))
+         (self1 () u n)))
+
+
+(for ((i (range 1 <= 100)))
+     (def (tup x y) (random-pop '(1 2 3 4 5)) )
+     (say out 
+          (rnd-select '(a b c d e f g h) 3)
+          ;x ":" y
+          "\n"))
+(e g d)
+(d e a)
+(f d b)
+(a b e)
+(c a g)
+(f d e)
+(c f e)
+(f g c)
+(c f g)
+(c g a)
+(b e a)
+(c a f)
+(g f b)
+(b a f)
+(e d b)
+(c a b)
+(b f a)
+(c g a)
+(c b a)
+(f e a)
+
+(nthtail 0 ())
+
+(rnd-select1 () '(1 2 3) 2)
+
+(pair 1 '(2))
+(pair 1 ())
+
+
+
+(let (((tup rest item) (pop (tail foo))))
+ (list x y))
+
+
+
+(use goo/random)
+
+(random (len foo))
+foo
