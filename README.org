@@ -1,5 +1,6 @@
 * 勉強
 - 書籍やネット上の演習問題の解答等々の集積地
+
 ** L-99: Ninety-Nine Lisp Problems
 - Dylan
 - Arc
@@ -13,4 +14,17 @@
 - Uranus
 - UtiLisp
 
+** P-99: Ninety-Nine Prolog Problems
 
+** どう書く.org
+- Common Lisp
+-- 295
+- Arc
+- Lisp 1.5
+
+** Linux で64bitアセンブリプログラミング http://www.mztn.org/lxasm64/amd00.html
+
+** Temporal Prolog
+
+** CLのライブラリ
+- cl-interpol

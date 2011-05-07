@@ -1,0 +1,2 @@
+* Linux で64bitアセンブリプログラミング
+http://www.mztn.org/lxasm64/amd00.html
