@@ -33,7 +33,7 @@ main () {
       most = total[i];
     }
   }
-  
+
   /* print */
   for (i = most; i > 0; --i) {
     for (j = 1; j < WORD_LEN_MAX; ++j) {
@@ -47,7 +47,7 @@ main () {
   }
 
   /* label */
-  for (i = 1; i < (WORD_LEN_MAX); ++i) {
+  for (i = 1; i < WORD_LEN_MAX; ++i) {
     printf("%02d ", i);
   }
 
