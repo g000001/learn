@@ -4,27 +4,26 @@
 
 int mygetline(char[], int maxline);
 
-int
-main()
+int main()
 {
-  int len;
-  char line[BUFFERLEN];
+    int len;
+    char line[BUFFERLEN];
 
-  while ((len = mygetline(line, BUFFERLEN)) > 0) {
-    if (len == BUFFERLEN - 1) {
-      /* 80文字を出力 */
-      printf("%s", line);
-      if (line[len - 1] != '\n') {
-        /* 末尾が\n\0でない場合は残りがあるので\nまで出力 */
-        int c;
-        while ((c = getchar()) != EOF && c != '\n') {
-          putchar(c);
+    while ((len = mygetline(line, BUFFERLEN)) > 0) {
+        if (len == BUFFERLEN - 1) {
+            /* 80文字を出力 */
+            printf("%s", line);
+            if (line[len - 1] != '\n') {
+                /* 末尾が\n\0でない場合は残りがあるので\nまで出力 */
+                int c;
+                while ((c = getchar()) != EOF && c != '\n') {
+                    putchar(c);
+                }
+                putchar('\n');
+            }
         }
-        putchar('\n');
-      }
     }
-  }
-  return 0;
+    return 0;
 }
 
 int mygetline(char s[], int lim)
