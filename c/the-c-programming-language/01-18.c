@@ -21,7 +21,7 @@ int main()
     return 0;
 }
 
-int blank_char_p(int c)
+int non_blank_char_p(int c)
 {
     return (c != ' ') && (c != '\t') && (c != '\n');
 }
@@ -31,7 +31,7 @@ int last_non_blank_char_pos(char line[])
     int pos = 0;
     int last_non_blank_pos = 0;
     while (line[pos] != '\0') {
-        if (blank_char_p(line[pos])) {
+        if (non_blank_char_p(line[pos])) {
             ++last_non_blank_pos;
         }
         ++pos;
