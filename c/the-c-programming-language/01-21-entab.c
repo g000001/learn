@@ -76,7 +76,6 @@ void entab(char line[])
 int main()
 {
     int c;
-    extern int pos;
     char line[LINE_SIZE];
 
     while ((c = getchar()) != EOF) {
