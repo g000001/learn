@@ -26,13 +26,25 @@
        (format nil "~{~D~^.~}" (nreverse ans)))))|#
 
 ;; こっちの方が効率良さそうだけどどうなんだろう
-(defun |integer-to-nnn.nnn.nnn.nnn| (integer)
+#|(defun |integer-to-nnn.nnn.nnn.nnn| (integer)
   (with-output-to-string (out)
     (do ((pos 24 (- pos 8)))
         (nil)
       (princ (ldb (byte 8 pos) integer) out)
       (when (zerop pos) (return))
-      (princ "." out))))
+      (princ "." out))))|#
+
+;; こっちの方が良いんだろうか
+(defun |integer-to-nnn.nnn.nnn.nnn| (integer)
+  (do ((out (make-array 15
+                        :element-type 'character
+                        :fill-pointer 0
+                        :adjustable 'T))
+       (pos 24 (- pos 8)))
+      (nil)
+    (format out "~D" (ldb (byte 8 pos) integer))
+    (when (zerop pos) (return out))
+    (format out ".")))
 
 (test :|integer-to-nnn.nnn.nnn.nnn|
   (is (string= (|integer-to-nnn.nnn.nnn.nnn| 3232235777)
