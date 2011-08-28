@@ -4,6 +4,7 @@
 
 (defsystem :doukaku-294
   :serial t
+  :depends-on (:split-sequence)
   :components ((:file "package")
                (:file "doukaku-294")))
 
