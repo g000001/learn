@@ -103,7 +103,7 @@ X       (return (car l))))
 ;; ================================================================
 (DEFUN NUMBER-OF-ELEMENTS (LIST)
   (PROG (N L)
-        (PSETQ N 0 
+        (PSETQ N 0
               L LIST)
 L       (COND ((NULL L) (GO X)))
         (PSETQ N (1+ N)
@@ -135,17 +135,17 @@ L       (COND ((NULL L) (RETURN RL)))
 ;; ================================================================
 (defun my-flatten (list acc)
   (cond ((null list) acc)
-        ((consp (car list)) 
+        ((consp (car list))
          (my-flatten (cdr list) (append acc (my-flatten (car list) '()))))
-        (t 
+        (t
          (my-flatten (cdr list) (append acc (list (car list)))))))
 
 (defun flatten (list)
   (labels ((frob (list acc)
              (cond ((null list) acc)
-                   ((consp (car list)) 
+                   ((consp (car list))
                     (frob (cdr list) (append acc (frob (car list) '()))))
-                   (t 
+                   (t
                     (frob (cdr list) (append acc (list (car list))))))))
     (frob list '() )))
 
@@ -182,11 +182,11 @@ L       (COND ((NULL L) (RETURN RL)))
 ;; P10
 ;; ================================================================
 (defun encode (list)
-  (labels ((encode1 (l retlist 
+  (labels ((encode1 (l retlist
                      &optional (c 0) (a (car l)))
-             (cond ((endp l) 
+             (cond ((endp l)
                     `((,c ,a) ,@retlist))
-                   ((equal (car l) a) 
+                   ((equal (car l) a)
                     (encode1 (cdr l) retlist
                              (1+ c) (car l)))
                    ('t
@@ -206,8 +206,8 @@ L       (COND ((NULL L) (RETURN RL)))
          (repeatp t (equal (car l) (cadr l)))
          (c 0 (1+ (if repeatp c 0)))
          (a (car list) (car l))
-         (r '() (if repeatp 
-                    r 
+         (r '() (if repeatp
+                    r
                   (append r (list-but-single a c)))))
         ((null l) (append r (list-but-single a c)))))) ;11:38pm Thursday,25 January 2007
 
@@ -282,7 +282,7 @@ X        (RETURN RETLIST)))
 (defun repli (list n)
 (let ((retlist '()))
   (mapc #'(lambda (l)
-            (setf retlist 
+            (setf retlist
                   `(,@retlist ,@(expand `(,n ,l)))))
         list)
   retlist))
@@ -306,7 +306,7 @@ L      (and (endp l) (return retlist))
 (defun split (list n)
   (do ((l list (cdr l))
        (c 0 (1+ c))
-       (retlist '(() ()) 
+       (retlist '(() ())
                 (let ((first  (car retlist))
                       (second (cadr retlist)))
                   (if (< c n)
@@ -319,11 +319,11 @@ L      (and (endp l) (return retlist))
 ;; ================================================================
 (defun slice (list start end)
   (labels ((slice1 (l c retlist)
-             (cond ((or (endp l) (> c end)) 
+             (cond ((or (endp l) (> c end))
                     retlist)
-                   ((<= start c end) 
+                   ((<= start c end)
                     (slice1 (cdr l) (1+ c) `(,@retlist ,(car l))))
-                   ('t 
+                   ('t
                     (slice1 (cdr l) (1+ c) retlist)))))
     (slice1 list 0 '())))               ; 1:32am Monday, 5 February 2007
 
@@ -334,7 +334,7 @@ L      (and (endp l) (return retlist))
   (labels ((split (list n)
              (do ((l list (cdr l))
                   (c 0 (1+ c))
-                  (retlist '(() ()) 
+                  (retlist '(() ())
                            (let ((first  (car retlist))
                                  (second (cadr retlist)))
                              (if (< c n)
@@ -342,9 +342,9 @@ L      (and (endp l) (return retlist))
                                  `(,first (,@second ,(car l)))))))
                  ((endp l) retlist))))
     (destructuring-bind (1st 2nd)
-        (split list 
-               (if (plusp n) 
-                   n 
+        (split list
+               (if (plusp n)
+                   n
                    (+ (length list) n)))
       `(,@2nd ,@1st))))
 
@@ -390,7 +390,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
   (labels ((rnd-select1 (l c retlist)
              (if (zerop c)
                retlist
-               (multiple-value-bind (rest item) 
+               (multiple-value-bind (rest item)
                    (remove-at l (random (length l)))
                  (rnd-select1 rest (1- c) `(,item ,@retlist))))))
     (rnd-select1 list n '())))        ;12:26am Monday,12 February 2007
@@ -456,9 +456,9 @@ XIT  (RETURN (NREVERSE RETLIST))))
 
 (defun group (lst pat)
   (labels ((group1 (lst pat)
-             (cond ((or (endp pat) (not (<= 0 (apply #'+ pat) (length lst)))) 
+             (cond ((or (endp pat) (not (<= 0 (apply #'+ pat) (length lst))))
                     () )
-                   ((= (length lst) (car pat)) 
+                   ((= (length lst) (car pat))
                     (list lst))
                    ((= 1 (length pat))
                     (sep2 lst (car pat)))
@@ -469,7 +469,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
 ;; 12:22am Monday,28 May 2007
 #|(defun sep2 (lst num)
   (let ((front (combination num lst)))
-    (map 'list #'(lambda (item) 
+    (map 'list #'(lambda (item)
                    `(,item ,(set-difference lst item)))
          front)))|#
 
@@ -477,11 +477,11 @@ XIT  (RETURN (NREVERSE RETLIST))))
   (do ((l lsts (cdr l))
        (retlst '()))
       ((endp l) retlst)
-    (setq retlst 
-          `(,@retlst 
+    (setq retlst
+          `(,@retlst
             ,@(map 'list #'(lambda (item)
                              (if (cadr item)
-                                 `(,@(butlast (car l)) ,(car item) ,(cadr item)) 
+                                 `(,@(butlast (car l)) ,(car item) ,(cadr item))
                                  `(,@(butlast (car l)) ,(car item))))
                    (sep2 (car (last (car l))) num))))))|#
 
@@ -493,7 +493,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
       (error "foo!")
       (cond ((endp pat) '()     )
             ((= (length lst) (car pat)) `(,lst))
-            ((= 1 (length pat)) 
+            ((= 1 (length pat))
              (sep2 lst (car pat)))
             ('t (sep2s (group-rpat lst (cdr pat)) (car pat))))))|#
 
@@ -529,7 +529,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
         ('t (do ((i 3 (+ i 2))
                  (fin n (multiple-value-bind (quotient remainder)
                             (floor n i)
-                          (if (zerop remainder) 
+                          (if (zerop remainder)
                               (return nil)
                               quotient))))
                 ((> i fin) t)))))
@@ -559,7 +559,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
 ;; ================================================================
 (defun totient-phi (m)
   (labels ((totient-phi1 (m n)
-             (if (zerop n) 
+             (if (zerop n)
                  0
                  (+ (if (coprime m n)
                         1
@@ -583,7 +583,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
                         (if (= q 1)
                             `(,i)
                             `(,i ,@(prime-factors1 q i))))
-                       ('t 
+                       ('t
                         (prime-factors1 n (next-prime i)))))))
       (prime-factors1 n 2))))
 
@@ -606,7 +606,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
 ;; ================================================================
 (defun phi (m)
   (apply #'*
-         (mapcar #'(lambda (list) 
+         (mapcar #'(lambda (list)
                      (destructuring-bind (p m)
                          list
                        (* (1- p) (expt p (1- m)))))
@@ -617,7 +617,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
 ;; ================================================================
 ;(macrolet ((1000-times-time (func)
 ;            (format t "~a: ================" `,func)
-;            `(time 
+;            `(time
 ;              (dotimes (i 998 ,func)
 ;                ,func))))
 ;  (1000-times-time (phi 10090))
@@ -628,7 +628,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
 ;; ================================================================
 (defun prime-list (start end)
   (do ((i start (1+ i))
-       (retlist '() (if (is-prime i) 
+       (retlist '() (if (is-prime i)
                         `(,@retlist ,i)
                         retlist)))
       ((= i end) retlist)))
@@ -664,7 +664,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
                      (range start end))))
 
 (defun goldbach-list/limit (start end limit)
-    (remove-if #'(lambda (item) 
+    (remove-if #'(lambda (item)
                    (< (car item) limit))
                (goldbach-list start end)))
 
@@ -698,7 +698,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
     (destructuring-bind (a b c) l
       (format t "~A ~A -> ~A~%" a b c))))
 
-(defun and/2 (a b) 
+(defun and/2 (a b)
   (if a b a))
 
 (defun or/2 (a b)
@@ -723,7 +723,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
 
 ;; 10:38pm Saturday,31 March 2007
 ;; (defun binary-tree-p (lst)
-;;   (if (/= 2 (length lst)) 
+;;   (if (/= 2 (length lst))
 ;;       nil
 ;;       (and (or (atom (car lst))
 ;;             (binary-tree-p (car lst)))
@@ -755,7 +755,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
 (defun TO-PREFIX (expr)
   (labels ((frob (expr)
              (cond ((atom expr) expr)
-                   ((and (consp expr) (eq 'not (car expr))) 
+                   ((and (consp expr) (eq 'not (car expr)))
                     (if (consp (cadr expr))
                         `(not ,(frob (cadr expr)))
                         expr))
@@ -837,17 +837,17 @@ XIT  (RETURN (NREVERSE RETLIST))))
 
 (defun SET-OPERATOR-PREDENCE (expr precedence)
   (reduce (lambda (res x) (conjunct-infix-expr x res))
-          precedence 
+          precedence
           :initial-value expr))
 
-;(to-prefix/c '(A and/2 (B or/2 C) equ/2 A and/2 B or/2 A and/2 C) 
+;(to-prefix/c '(A and/2 (B or/2 C) equ/2 A and/2 B or/2 A and/2 C)
 ;             *operator-precedence-list*)
 ;=> (EQU/2 (AND/2 A (OR/2 B C)) (OR/2 (AND/2 A B) (AND/2 A C)))
 ;
 (defun TO-PREFIX/C (expr precedence)
   (labels ((frob (expr)
              (cond ((atom expr) expr)
-                   ((and (consp expr) (eq 'not (car expr))) 
+                   ((and (consp expr) (eq 'not (car expr)))
                     (if (consp (cadr expr))
                         `(not ,(frob (cadr expr)))
                         expr))
@@ -869,7 +869,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
         (len (length args)))
     `(DOLIST (,g (make-truth-table ,len))
        (DESTRUCTURING-BIND ,args ,g
-         (FORMAT T "~{~A~^, ~} => ~A~%" ,g 
+         (FORMAT T "~{~A~^, ~} => ~A~%" ,g
                  ,(to-prefix/c expr *operator-precedence-list*))))))
 
 ;(table/c (a b c)
@@ -898,15 +898,15 @@ XIT  (RETURN (NREVERSE RETLIST))))
         (retlst '() `(,@retlst ,(if (evenp (floor num (expt 2 j))) true false))))
        ((zerop j) retlst)))
 
-(defun make-truth-table (size &optional (true t) (false nil))
+#|(defun make-truth-table (size &optional (true t) (false nil))
   (do ((i 0 (1+ i))
        (retlst '() `(,@retlst ,(nth-truth size i true false))))
-      ((= i (expt 2 size)) retlst)))
+      ((= i (expt 2 size)) retlst)))|#
 
-(defun table (size expr)
+#|(defun table (size expr)
   (mapcar #'(lambda (item)
               `(,@item ,(apply expr item)))
-          (make-truth-table size)))
+          (make-truth-table size)))|#
 
 (defun pp-table (lst)
   (dolist (l lst)
@@ -919,17 +919,17 @@ XIT  (RETURN (NREVERSE RETLIST))))
 (defun bin->gray (n)
   (logxor (ash n -1) n))
 
-(defun nbit-gray (n)
+#|(defun nbit-gray (n)
   (do ((i 0 (1+ i))
        (retlst '() `(,@retlst ,(format nil (format nil "~~~d,'0b" n) (bin->gray i)))))
-      ((= i (expt 2 n) retlst))))
+      ((= i (expt 2 n) retlst))))|#
 
 ;; 10:17am Friday,28 March 2008
-(defun nbit-gray (n)
+#|(defun nbit-gray (n)
   (do ((i 0 (1+ i))
-       (retlst () (cons (format nil "~V,'0B" n (bin->gray i)) 
+       (retlst () (cons (format nil "~V,'0B" n (bin->gray i))
                         retlst)))
-      ((= i (expt 2 n)) (nreverse retlst))))
+      ((= i (expt 2 n)) (nreverse retlst))))|#
 
 (defun nbit-gray (n)
   (loop :for i :from 0 :below (expt 2 n)
@@ -965,7 +965,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
 ;; P50
 ;; ================================================================
 (defun for-each-tree (f g n tree)
-  (cond ((not (listp tree)) (funcall f tree))           
+  (cond ((not (listp tree)) (funcall f tree))
         ((endp tree) n)
         ('t (funcall g (for-each-tree f g n (car tree))
                      (for-each-tree f g n (cdr tree))))))
@@ -1002,8 +1002,8 @@ XIT  (RETURN (NREVERSE RETLIST))))
 (defun huffman-encode (lst)
   (rebuild-list
    (flatten-tree
-    (huffman-tree->code 
-     (make-huffman-tree 
+    (huffman-tree->code
+     (make-huffman-tree
       (make-frequency-list lst))))))
 
 (defun pp-huffman-code (lst)
@@ -1014,7 +1014,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
 ;(pp-huffman-code
 ; (sort (huffman-encode *testdata*) #'(lambda (a b) (char< (car a) (car b)))))
 
-;; 
+;;
 
 ;; (defun istree (obj)
 ;;   (and (listp obj)
@@ -1043,7 +1043,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
       '(())
       (if (>= 1 n)
           '((x () () ))
-          (reduce (lambda (res x) 
+          (reduce (lambda (res x)
                     (let ((tree `(x ,@x)))
                       (if (cbal-tree-p tree)
                           `(,tree ,@res)
@@ -1130,7 +1130,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
 
 ;;  5:31pm Sunday,11 May 2008
 (defun sym-cbal-tree (n)
-  (remove-if (complement #'symmetric) 
+  (remove-if (complement #'symmetric)
              (cbal-tree n)))
 
 ;(length (sym-cbal-tree 57))
@@ -1182,7 +1182,7 @@ XIT  (RETURN (NREVERSE RETLIST))))
 
 (defun tree-height (tree)
   (if tree
-      (1+ (max (tree-height (cadr tree)) 
+      (1+ (max (tree-height (cadr tree))
                (tree-height (caddr tree))))
       0))
 
@@ -1215,6 +1215,12 @@ minnode = minnode(1- )+ minnode (2-) + 1
   (if (< h 3)
       a1
       (min-nodest (1- h) (+ 1 a1 a2) a1)))|#
+
+(defun min-nodes (h)
+  (do ((h h (1- h))
+       (res 2 (+ 1 res acc))
+       (acc 1 res))
+      ((< h 3) res)))
 
 (defun max-nodes (h)
   (1- (expt 2 h)))
@@ -1310,8 +1316,8 @@ minnode = minnode(1- )+ minnode (2-) + 1
              (cond ((endp tree) (funcall cont '() ))
                    ((= 1 level) (funcall cont `(,(car tree))))
                    ('T
-                    (frob (1- level) 
-                          (second tree) 
+                    (frob (1- level)
+                          (second tree)
                           #'(lambda (l)
                               (frob (1- level)
                                     (third tree)
@@ -1420,13 +1426,13 @@ minnode = minnode(1- )+ minnode (2-) + 1
                           `((,pos . ,level)
                             ,(frob left  (- pos offset) (1- depth) (1+ level))
                             ,(frob right (+ pos offset) (1- depth) (1+ level)))))))))
-      (frob tree 
+      (frob tree
             (1+ (- (expt 2 (tree-depth tree))
                    (expt 2 (- (tree-depth tree) (depth-of-most-left-node tree)))))
             depth 1))))
 
 ;test
-;(defparameter *tree* '(n 
+;(defparameter *tree* '(n
 ;                      (k (c (a () ()) (e (d () ()) (g  () ()))) (m () ()))
 ;                      (u (p () (q () ())) ())))
 
@@ -1451,7 +1457,7 @@ minnode = minnode(1- )+ minnode (2-) + 1
             ((= i len) (let ((reg (nreverse retlst)))
                          (values (car reg) (cadr reg))))
           (let ((part (subseq str i (1+ i))))
-            (cond 
+            (cond
               ((and (string= "(" part) (zerop count)) (push i retlst) (incf count))
               ((and (string= ")" part) (= 1 count))   (push i retlst) (decf count))
               ((string= "(" part) (incf count))
@@ -1474,12 +1480,12 @@ minnode = minnode(1- )+ minnode (2-) + 1
                (values strip ""))
               ((zerop (position #\, strip))
                (values "" (subseq strip 1)))
-              ('t 
+              ('t
                (if (find #\( strip)
                    (multiple-value-bind (start end)
                        (find-region strip)
                      (declare (ignore start))
-                     (values 
+                     (values
                       (subseq strip 0 (1+ end))
                       (subseq strip (+ 2 end))))
                    (values
@@ -1503,7 +1509,7 @@ minnode = minnode(1- )+ minnode (2-) + 1
              (if tree
                  (if (leafp tree)
                      `(,(string (car tree)))
-                     `(,(string (car tree)) 
+                     `(,(string (car tree))
                         "("
                         ,@(frob (cadr tree))
                         ","
@@ -1613,14 +1619,14 @@ minnode = minnode(1- )+ minnode (2-) + 1
 
 (defun tree-string>get-children (str)
   (let ((rootless (subseq str 1)))
-    (values 
-     (subseq rootless 0 (1+ (tree-string>get-boundary rootless)))  
-     (subseq rootless (1+ (tree-string>get-boundary rootless)))))) 
+    (values
+     (subseq rootless 0 (1+ (tree-string>get-boundary rootless)))
+     (subseq rootless (1+ (tree-string>get-boundary rootless))))))
 
 ;(equal
 ; (mirror (dotstring->tree (tree->dotstring (mirror (dotstring->tree "ABD..E..C.FG...")))))
 ; *tree*)
-    
+
 
 ;; ================================================================
 ;; P70B
@@ -1647,10 +1653,10 @@ minnode = minnode(1- )+ minnode (2-) + 1
 ;; P70
 ;; ================================================================
 (defun node-string->tree (string)
-  (values 
-   (handler-case 
+  (values
+   (handler-case
        (read-from-string
-        (coerce 
+        (coerce
          (let ((retlst '()))
            (mapc #'(lambda (c)
                      (setq retlst (if (char= #\^ c)
@@ -1670,8 +1676,8 @@ minnode = minnode(1- )+ minnode (2-) + 1
 (defun internal-path-length (tree)
   (labels ((ipl (tree depth)
              (cond ((> 2 (length tree)) 0)
-                   ('T (apply #'+ 
-                              (1- (length tree)) 
+                   ('T (apply #'+
+                              (1- (length tree))
                               (mapcar #'(lambda (l)
                                           (+ depth (ipl l (1+ depth))))
                                       (cdr tree)))))))
@@ -1705,9 +1711,9 @@ minnode = minnode(1- )+ minnode (2-) + 1
              (cond ((and (zerop depth) (atom tree)) `(,tree))
                    ((atom tree) tree)
                    ('T `(,(frob (car tree) (1+ depth))
-                          ,@(mapcar #'(lambda (n) 
-                                        (if (atom n) 
-                                            `(,n) 
+                          ,@(mapcar #'(lambda (n)
+                                        (if (atom n)
+                                            `(,n)
                                             (frob n (1+ depth))))
                                     (cdr tree)))))))
     (frob tree 0)))
@@ -1731,10 +1737,10 @@ minnode = minnode(1- )+ minnode (2-) + 1
 
 (defun graph-term->adjacency-list (expr)
   `(,@(mapcar #'(lambda (item)
-                  `(,item 
+                  `(,item
                     ,(delete nil
-                             (delete-duplicates 
-                              (flatten 
+                             (delete-duplicates
+                              (flatten
                                (mapcar #'(lambda (lst)
                                            (delete item
                                                    (if (member item lst)
@@ -1747,14 +1753,14 @@ minnode = minnode(1- )+ minnode (2-) + 1
   `(,(mapcar #'car expr)
      ,(sort
        (delete-duplicates
-        (reduce #'(lambda (retlst i)            
+        (reduce #'(lambda (retlst i)
                     `(,@retlst ,@(mapcar #'(lambda (j)
                                              (sort `(,(car i) ,j)
                                                    #'(lambda(a b)
                                                        (string< (string a) (string b)))))
                                          (cadr i))))
-                expr :initial-value '() ) 
-        :test #'equal) 
+                expr :initial-value '() )
+        :test #'equal)
        #'(lambda(a b) (string< (string (car a)) (string (car b)))))))
 
 (defun graph-term->human-friendly (expr)
@@ -1776,7 +1782,7 @@ minnode = minnode(1- )+ minnode (2-) + 1
                    strlst)))
     (let ((item-list (mapcar #'(lambda (item)
                                  (if (listp item)
-                                     `(,(read-from-string (car item)) 
+                                     `(,(read-from-string (car item))
                                         ,(read-from-string (cadr item)))
                                      (read-from-string item)))
                              (string-split/- expr))))
@@ -1805,7 +1811,7 @@ minnode = minnode(1- )+ minnode (2-) + 1
   `(,(mapcar #'car expr)
     ,(reduce #'(lambda (retlst item)
                  (if item
-                     `(,@retlst ,@(mapcar #'(lambda (i) `(,(car item) ,i)) 
+                     `(,@retlst ,@(mapcar #'(lambda (i) `(,(car item) ,i))
                                           (cadr item)))
                    retlst))
              expr :initial-value '() )))
@@ -1824,7 +1830,7 @@ minnode = minnode(1- )+ minnode (2-) + 1
 ;; -----------------------------------------------------------------------------
 ;; directed-graph-term <=> human-friendly
 (defun graph-term->human-friendly/directed (expr)
-  (sort `(,@(mapcar #'(lambda (item) 
+  (sort `(,@(mapcar #'(lambda (item)
                         (format nil "~A>~A" (car item) (cadr item)))
                     (cadr expr))
           ,@(mapcar #'string
@@ -1845,7 +1851,7 @@ minnode = minnode(1- )+ minnode (2-) + 1
                                      (mapcar #'read-from-string item)
                                    (read-from-string item)))
                              (splitter expr))))
-      `(,(delete-duplicates (flatten item-list)) 
+      `(,(delete-duplicates (flatten item-list))
         ,(delete-if-not #'listp item-list)))))
 
 ;; -----------------------------------------------------------------------------
@@ -1855,7 +1861,7 @@ minnode = minnode(1- )+ minnode (2-) + 1
   (cadr expr))
 
 (defun arc-clause->graph-term/labelled (expr)
-  `(,(sort 
+  `(,(sort
       (delete-duplicates
        (reduce #'(lambda (ret item) `(,@(butlast item) ,@ret))
                expr :initial-value '() ))
@@ -1878,7 +1884,7 @@ minnode = minnode(1- )+ minnode (2-) + 1
   (mapcar #'(lambda (item)
               `(,item ,(get-direction/labelled item (cadr expr))))
           (car expr)))
-                       
+
 (defun get-direction/labelled (from dist-lst)
   (reduce #'(lambda (retlst item)
               (if (eql from (car item))
@@ -1900,7 +1906,7 @@ minnode = minnode(1- )+ minnode (2-) + 1
              (mapcar #'(lambda (item)
                          (let ((>pos (position #\> (coerce item 'list)))
                                (/pos (position #\/ (coerce item 'list))))
-                           (if >pos 
+                           (if >pos
                                `(,(subseq item 0 >pos)
                                  ,(subseq item (1+ >pos) /pos)
                                  ,(subseq item (1+ /pos)))
@@ -1911,10 +1917,10 @@ minnode = minnode(1- )+ minnode (2-) + 1
                                      (mapcar #'read-from-string item)
                                    (read-from-string item)))
                              (splitter expr))))
-      `(,(delete-duplicates 
+      `(,(delete-duplicates
           (reduce #'(lambda (retlst item)
                       `(,@retlst ,@(if (listp item) (butlast item) `(,item))))
-                  item-list :initial-value '() )) 
+                  item-list :initial-value '() ))
         ,(delete-if-not #'listp item-list)))))
 
 ;; ================================================================
@@ -1954,8 +1960,83 @@ minnode = minnode(1- )+ minnode (2-) + 1
 ;; ================================================================
 
 ;; ================================================================
-;; P90
+;; P90 Eight queens problem | 7-Apr-12 06:50:36
 ;; ================================================================
+(defun attackp (x1 y1 x2 y2)
+  (cond ((= x1 x2) 'T)
+        ((= y1 y2) 'T)
+        ((= y1 (- y2 (- x2 x1))) 'T)
+        ((= y2 (- y1 (- x2 x1))) 'T)
+        (T nil)))
+
+(defun find-paths (size prevs &aux ans (x (length prevs)))
+  (dotimes (y size)
+    (when (notany (lambda (p) (apply #'attackp x y p)) prevs)
+      (push (list x y) ans)))
+  ans)
+
+(defun n-queens (n)
+  (let* ((ans (list (list 0 (random n))))
+         (stacks (make-array n :initial-element '() ))
+         (x 1) )
+    (labels ((step-forward ()
+               (push (pop (elt stacks x)) ans)
+               (incf x))
+             (step-back ()
+               (pop ans)
+               (decf x))
+             (save-paths-and-step-forward (paths)
+               (push (pop paths) ans)
+               (setf (elt stacks x) paths)
+               (incf x))
+             (unwind ()
+               (do ()
+                   ((not (null (elt stacks x)))
+                    (step-forward))
+                 (step-back))))
+      (do ((paths (find-paths n ans)
+                  (find-paths n ans) ))
+          ((= x n) (mapcar #'second (nreverse ans)))
+        (if (null paths)
+            (unwind)
+            (save-paths-and-step-forward paths) )))))
+
+(defun eight-queens ()
+  (n-queens 8))
+
+(defun trans (list &aux ans)
+  (dotimes (i (length list))
+    (push (position i list)
+          ans ))
+  (nreverse ans) )
+
+(defun ppnq (list)
+  (let ((size (length list))
+        (c 0))
+    (format t "~&---- ~A queens ----~%" size)
+    (let ((trans (trans list)))
+      (dolist (y trans)
+        (dotimes (x size)
+          (princ (cond ((= x y) "Ｑ")
+                       ((oddp c) "□")
+                       (T "■")))
+          (incf c))
+        (when (evenp size)
+          (incf c))
+        (terpri) ))))
+
+;; (ppnq (eight-queens))
+;>>  ---- 8 queens ----
+;>>  ■□■Ｑ■□■□
+;>>  □■□■□Ｑ□■
+;>>  ■□■□■□■Ｑ
+;>>  □■Ｑ■□■□■
+;>>  Ｑ□■□■□■□
+;>>  □■□■□■Ｑ■
+;>>  ■□■□Ｑ□■□
+;>>  □Ｑ□■□■□■
+;>>
+;=>  NIL
 
 ;; ================================================================
 ;; P91
@@ -2013,4 +2094,3 @@ minnode = minnode(1- )+ minnode (2-) + 1
 ;; ================================================================
 ;; P99
 ;; ================================================================
-
