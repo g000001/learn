@@ -1,1 +1,1 @@
-This is the stub README.org for the "introduction-to-common-lisp-in-dialogue" project.
+対話によるCommon Lisp入門の練習問題の解答
