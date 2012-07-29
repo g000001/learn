@@ -90,10 +90,19 @@
 #|(declaim (ftype (function (integer integer) integer) expt$)
          (ftype (function (integer integer integer) integer) expt$1))|#
 
-(defun expt$ (m n)
+
+#| 別に効率良くなってない
+  (defun expt$ (m n)
   ;; (declare #.speed-speed-speed)
   (if (evenp n)
       (expt$1 (expt$1 m 2 1) (/ n 2) 1)
+      (* m (expt$ m (- n 1)))))|#
+
+;;; 正解
+(defun expt$ (m n)
+  ;; (declare #.speed-speed-speed)
+  (if (evenp n)
+      (expt$1 (* m m) (/ n 2) 1)
       (* m (expt$ m (- n 1)))))
 
 
@@ -111,8 +120,8 @@
 
 
 (test expt$1-test
-  (for-all ((n (gen-integer :min 0 :max 1000))
-            (m (gen-integer :min 0 :max 1000)))
+  (for-all ((n (gen-integer :min 0 :max 10000))
+            (m (gen-integer :min 0 :max 10000)))
     (is (= (expt$ m n) (expt m n)))))
 
 
