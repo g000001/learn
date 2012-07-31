@@ -169,4 +169,69 @@
 
 
 
+;;; II
+
+;;; remove-if
+(defvar *remove-if-data* '(5 + 3 = 8))
+
+(test remove-if
+  ;; 1
+  (is (equal '(+ =)
+             (remove-if #'numberp *remove-if-data*)))
+  ;; 2
+  (is (equal '(5 3 8)
+             (remove-if (complement #'numberp)
+                        *remove-if-data*)))
+  ;; 3
+  (is (equal '(5 3 = 8)
+             (remove-if #'symbolp
+                        *remove-if-data*
+                        :count 1)))
+  ;; 4
+  (is (equal '(+ 3 =)
+             (remove-if (lambda (x)
+                          (and (numberp x) 
+                               (< 4 x)))
+                        *remove-if-data*))))
+
+;;; defstruct
+(defstruct (person (:type list) :named)
+  name age hobby)
+
+
+(defvar dora (make-person :name 'doraemon :age 9))
+
+(listp dora)
+;=>  T
+
+(person-p dora)
+;=>  T
+
+(person-name dora)
+;=>  DORAEMON
+
+
+(defun union2 (u v)
+  (let ((tab (make-hash-table)))
+    (loop :for e :in v 
+          :do (setf (gethash e tab) t))
+    (union2-1 u v tab)))
+
+
+(defun union2-1 (u v tab)
+  (cond ((null u) v)
+        ((gethash (first u) tab)
+         (union2-1 (rest u) v tab))
+        (T (cons (first u)
+                 (union2-1 (rest u) v tab)))))
+
+
+(test union2-test
+  (for-all ((u (gen-list))
+            (v (gen-list)))
+    (is-true (null (set-difference (union2 u v)
+                                   (union u v))))))
+
+
+
 ;;; eof
