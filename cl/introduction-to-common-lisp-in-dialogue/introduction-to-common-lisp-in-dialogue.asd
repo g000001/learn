@@ -6,7 +6,8 @@
   :serial t
   :depends-on (:fiveam)
   :components ((:file "package")
-               (:file "introduction-to-common-lisp-in-dialogue")))
+               (:file "introduction-to-common-lisp-in-dialogue")
+               (:file "interpreter")))
 
 (defmethod perform ((o test-op) (c (eql (find-system :introduction-to-common-lisp-in-dialogue))))
   (load-system :introduction-to-common-lisp-in-dialogue)
