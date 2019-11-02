@@ -14,16 +14,16 @@ define method last2
   end if
 end method last2;
 
-let list = #(foo:, bar:, baz:);
-format-out("%=\n", last2(list));
+let lst = #(foo:, bar:, baz:);
+format-out("%=\n", last2(lst));
 // => #(#"bar", #"baz")
 
-let list = #();
-format-out("%=\n", last2(list));
+//let list = #();
+//format-out("%=\n", last2(list));
 // => #()
 
-let list = #(1, 2, 3, 4, 5);
-format-out("%=\n", last2(list));
+//let list = #(1, 2, 3, 4, 5);
+//format-out("%=\n", last2(list));
 // => #()
 
 
