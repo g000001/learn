@@ -1,0 +1,15 @@
+:- module main.
+main :- unix:unix([stdout(Res)]), check_and_write(Res).
+check_and_write(normal(Res)) :-
+      join_strings(["foo", "bar", "\n"], "", Str),
+      Res = [fwrite(Str)].
+
+
+join_strings([], Sep, Ans) :- Ans = "".
+join_strings([Sa|Sd], Sep, Ans) :- 
+      join_strings(Sd, Sep, Ans1),
+      generic:join(Sep, Ans1, Ans2),
+      generic:join(Sa, Ans2, Ans).
+
+
+	
