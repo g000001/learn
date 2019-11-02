@@ -1,1 +1,5 @@
-*~
+*.*~
+*.o
+*.ali
+*.exe
+.fd_dir_history
